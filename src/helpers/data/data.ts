@@ -63,15 +63,15 @@ const randomData = (
       trim: true,
       values: newArray(
         size,
-        (val, i = 0): ValueConfig => ({
-          name: `Type ${i}`
+        (val, i): ValueConfig => ({
+          name: `Type ${Number(i)}`
         })
       )
     },
     data: newArray(
       length,
-      (val, i = 0): TableItem => ({
-        label: `Item ${i}`,
+      (val, i): TableItem => ({
+        label: `Item ${Number(i)}`,
         values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh))
       })
     )

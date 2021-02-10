@@ -4,12 +4,12 @@ import {
   randomColor,
   randomPalette,
   darkerColor,
-  addColorsToConfig,
+  addColorsToConfig
 } from './'
 import { randomData } from '../data'
 import { RGBColor } from 'd3-color'
 
-const verifyColor = (newColor: RGBColor) => {
+const verifyColor = (newColor: RGBColor): void => {
   expect(newColor.r).toBeGreaterThanOrEqual(0)
   expect(newColor.r).toBeLessThanOrEqual(255)
   expect(newColor.g).toBeGreaterThanOrEqual(0)
@@ -78,7 +78,3 @@ describe('addColorsToConfig', () => {
     verifyColor(newValues[0].rgbColor as RGBColor)
   })
 })
-
-
-
-

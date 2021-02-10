@@ -1,6 +1,6 @@
 {
   "name": "pi-charts",
-  "version": "0.1.0",
+  "version": "0.0.0-development",
   "description": "Simple charting solution driven by d3 and ES.Next",
   "main": "./dist/pi-c.min.js",
   "repository": "https://github.com/lancerael/pi-charts",
@@ -15,6 +15,7 @@
     "test": "yarn lint && nyc yarn test:quick",
     "test:quick": "jasmine-ts --config=jasmine.json",
     "test:coverage": "nyc --reporter=lcov --reporter=text-summary yarn test:quick",
+    "test:full": "yarn lint && yarn test:coverage",
     "build": "webpack",
     "build:dev": "yarn lint && webpack --mode=development",
     "start": "rimraf ./dist && yarn build:dev && webpack serve --host localhost --open"
