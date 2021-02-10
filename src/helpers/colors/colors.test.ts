@@ -4,7 +4,7 @@ import {
   randomColor,
   randomPalette,
   darkerColor,
-  addColorsToConfig
+  addColorsToConfig,
 } from './'
 import { randomData } from '../data'
 import { RGBColor } from 'd3-color'

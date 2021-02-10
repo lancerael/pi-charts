@@ -4,7 +4,7 @@ import {
   TableConfig,
   TableItem,
   TableData,
-  ChartTable
+  ChartTable,
 } from './data.d'
 
 /**
@@ -64,17 +64,17 @@ const randomData = (
       values: newArray(
         size,
         (val, i): ValueConfig => ({
-          name: `Type ${Number(i)}`
+          name: `Type ${Number(i)}`,
         })
-      )
+      ),
     },
     data: newArray(
       length,
       (val, i): TableItem => ({
         label: `Item ${Number(i)}`,
-        values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh))
+        values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh)),
       })
-    )
+    ),
   }
 }
 
@@ -91,9 +91,9 @@ const emptyTable = (): ChartTable => {
       title: '',
       axisLabels: ['', ''],
       values: [],
-      trim: true
+      trim: true,
     },
-    data: []
+    data: [],
   }
 }
 

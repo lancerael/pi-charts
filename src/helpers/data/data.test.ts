@@ -70,9 +70,9 @@ describe('emptyTable', () => {
         title: '',
         axisLabels: ['', ''],
         values: [],
-        trim: true
+        trim: true,
       },
-      data: []
+      data: [],
     })
   })
 })
@@ -87,18 +87,18 @@ describe('transformDataKeys', () => {
         {
           key: 'k1',
           name: 'K1',
-          color: 'red'
+          color: 'red',
         },
         {
           key: 'k2',
           name: 'K2',
-          color: 'blue'
-        }
-      ]
+          color: 'blue',
+        },
+      ],
     }
     const data = [
       { k1: 4, k2: 5, k3: 'six' },
-      { k1: 7, k2: 8, k3: 'nine' }
+      { k1: 7, k2: 8, k3: 'nine' },
     ]
     const transformedData = transformDataKeys(config, data)
     transformedData.forEach((newData, i) => {
@@ -115,18 +115,18 @@ describe('transformDataKeys', () => {
       values: [
         {
           name: 'K1',
-          color: 'red'
+          color: 'red',
         },
         {
           key: 'k2',
           name: 'K2',
-          color: 'blue'
-        }
-      ]
+          color: 'blue',
+        },
+      ],
     }
     const data = [
       { k1: 4, k2: 5, k3: 'six' },
-      { k1: 7, k2: 8, k3: 'nine' }
+      { k1: 7, k2: 8, k3: 'nine' },
     ]
     const transformedData = transformDataKeys(config, data)
     expect(transformedData[0].values).toEqual([0, 5])
@@ -142,14 +142,14 @@ describe('transformDataKeys', () => {
         {
           key: 'k1',
           name: 'K1',
-          color: 'red'
+          color: 'red',
         },
         {
           key: 'k2',
           name: 'K2',
-          color: 'blue'
-        }
-      ]
+          color: 'blue',
+        },
+      ],
     }
     const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
     const transformedData = transformDataKeys(config, data)
