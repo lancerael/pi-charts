@@ -1,6 +1,6 @@
 # pi-charts
 
-[![Tests](https://github.com/lancerael/pi-charts/workflows/tests/badge.svg?branch=master)](https://github.com/lancerael/pi-charts/actions?query=workflow%3A%22tests%22)
+[![Tests](https://github.com/lancerael/pi-charts/workflows/Tests/badge.svg?branch=master)](https://github.com/lancerael/pi-charts/actions?query=workflow%3A%22Tests%22)
 [![Coverage Status](https://coveralls.io/repos/github/lancerael/pi-charts/badge.svg?branch=master)](https://coveralls.io/github/lancerael/pi-charts?branch=master)
 [![License](https://badgen.net/github/license/lancerael/pi-charts)](https://github.com/lancerael/pi-charts/blob/master/LICENSE)
 [![TS-Standard - Typescript Standard Style Guide](https://badgen.net/badge/code%20style/ts-standard/blue?icon=typescript)](https://github.com/standard/ts-standard)
