@@ -11,7 +11,7 @@
     "charts"
   ],
   "scripts": {
-    "lint": "prettier -w ./src/**/*.ts && ts-standard --fix && eslint --ext .ts",
+    "lint": "ts-standard --fix && prettier -w ./src/**/*.ts && eslint --ext .ts",
     "test": "yarn lint && nyc yarn test:quick",
     "test:quick": "jasmine-ts --config=jasmine.json",
     "test:coverage": "nyc --reporter=lcov --reporter=text-summary yarn test:quick",

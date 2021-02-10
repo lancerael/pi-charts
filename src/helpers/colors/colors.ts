@@ -22,7 +22,7 @@ const colorFilter = (
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   return {
     light: brightness < brightnessBoundary,
-    dark: brightness > brightnessBoundary
+    dark: brightness > brightnessBoundary,
   }[backgroundContrast]
 }
 
@@ -100,7 +100,7 @@ const addColorsToConfig = (
     }: ValueConfig): ValueConfig => ({
       color,
       rgbColor: addRGB && rgb(color),
-      ...configValues
+      ...configValues,
     })
   )
 
@@ -110,5 +110,5 @@ export {
   randomColor,
   randomPalette,
   darkerColor,
-  addColorsToConfig
+  addColorsToConfig,
 }
