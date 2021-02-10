@@ -21,9 +21,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test:fill
+    - name: Yarn install and test
+    - uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: install
+    - uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: build
+    - uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: test:full
 
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.2
