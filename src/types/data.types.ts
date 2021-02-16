@@ -8,9 +8,8 @@ interface ValueConfig {
 }
 
 interface TableConfig {
-  title: string
-  axisLabels: [string, string]
   values: ValueConfig[]
+  axisLabels?: [string, string]
   axisKeys?: string[]
   trim?: boolean
 }
@@ -23,6 +22,7 @@ interface TableItem {
 type TableData = TableItem[]
 
 interface ChartTable {
+  label: string
   config: TableConfig
   data: TableData
 }

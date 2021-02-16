@@ -1,37 +1,37 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+import path from 'path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
-module.exports = {
+export default {
   entry: path.resolve(__dirname, 'src/index.ts'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'pi-c.min.js',
     library: 'pic',
-    libraryTarget: 'umd',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
         use: 'ts-loader',
-        include: [path.resolve(__dirname, 'src')],
-      },
-    ],
+        include: [path.resolve(__dirname, 'src')]
+      }
+    ]
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js']
   },
   plugins: [
     new HtmlWebpackPlugin({
       inject: false,
       title: 'pi-charts',
       template: './demo/index.html',
-      minify: false,
+      minify: false
     })
   ],
   mode: 'production',
   devServer: {
     static: path.resolve(__dirname, 'dist'),
-    hot: true,
+    hot: true
   }
 }

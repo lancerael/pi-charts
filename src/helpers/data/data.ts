@@ -5,7 +5,7 @@ import {
   TableItem,
   TableData,
   ChartTable,
-} from './data.d'
+} from '../../types'
 
 /**
  * Returns a sample selection from any array
@@ -55,28 +55,26 @@ const randomData = (
   size: number = randomNumber(1, 4),
   rangeLow: number = randomNumber(1, 50),
   rangeHigh: number = randomNumber(rangeLow, 200)
-): ChartTable => {
-  return {
-    config: {
-      title: 'Random Chart Data',
-      axisLabels: ['Y Axis', 'X Axis'],
-      trim: true,
-      values: newArray(
-        size,
-        (val, i): ValueConfig => ({
-          name: `Type ${Number(i)}`,
-        })
-      ),
-    },
-    data: newArray(
-      length,
-      (val, i): TableItem => ({
-        label: `Item ${Number(i)}`,
-        values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh)),
+): ChartTable => ({
+  label: 'Random Chart Data',
+  config: {
+    axisLabels: ['Y Axis', 'X Axis'],
+    trim: true,
+    values: newArray(
+      size,
+      (val, i): ValueConfig => ({
+        name: `Type ${Number(i)}`,
       })
     ),
-  }
-}
+  },
+  data: newArray(
+    length,
+    (val, i): TableItem => ({
+      label: `Item ${Number(i)}`,
+      values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh)),
+    })
+  ),
+})
 
 /**
  * Returns empty table data and config for demo purposes.
@@ -87,8 +85,8 @@ const randomData = (
  */
 const emptyTable = (): ChartTable => {
   return {
+    label: '',
     config: {
-      title: '',
       axisLabels: ['', ''],
       values: [],
       trim: true,
@@ -106,7 +104,11 @@ const emptyTable = (): ChartTable => {
  * @param data the chart data to be transformed
  * @return Parsed table data structure
  */
-const transformDataKeys = (config: TableConfig, data: any[]): TableData => {
+const transformDataKeys = (
+  config: TableConfig | undefined,
+  data: any[]
+): TableData => {
+  if (config === undefined) return data
   return data.map(
     (item): TableItem => {
       item.values = config.values.map(({ key }, i): number => {

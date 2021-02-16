@@ -1,4 +1,4 @@
-import { truncateString, randomNumber, newArray } from './'
+import { truncateString, randomNumber, newArray, truthy } from './'
 
 describe('truncateString', () => {
   it('should truncate a string', () => {
@@ -41,5 +41,31 @@ describe('newArray', () => {
     expect(generatedArray[0]).toBe(5)
     expect(generatedArray[1]).toBe(5)
     expect(generatedArray[2]).toBe(5)
+  })
+})
+
+describe('truthy', () => {
+  it('should handle strings', () => {
+    expect(truthy('something')).toBe(true)
+    expect(truthy('')).toBe(false)
+  })
+  it('should handle numbers', () => {
+    expect(truthy(1)).toBe(true)
+    expect(truthy(0)).toBe(false)
+  })
+  it('should handle boolean', () => {
+    expect(truthy(true)).toBe(true)
+    expect(truthy(false)).toBe(false)
+  })
+  it('should handle arrays', () => {
+    expect(truthy([])).toBe(true)
+    expect(truthy([false])).toBe(true)
+  })
+  it('should handle null', () => {
+    expect(truthy(null)).toBe(false)
+  })
+  it('should handle undefined', () => {
+    expect(truthy(undefined)).toBe(false)
+    expect(truthy()).toBe(false)
   })
 })
