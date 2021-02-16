@@ -153,4 +153,11 @@ describe('transformDataKeys', () => {
     expect(transformedData[0].values).toEqual([4, 0])
     expect(transformedData[0].label).toEqual('AXIS KEY MISMATCH')
   })
+
+  it('should handle missing config', () => {
+    const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
+    const transformedData = transformDataKeys(undefined, data)
+    // @ts-ignore
+    expect(transformedData).toEqual(data)
+  })
 })
