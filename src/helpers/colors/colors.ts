@@ -1,7 +1,6 @@
 import { rgb, RGBColor } from 'd3-color'
 import { randomNumber, newArray } from '../utilities'
-import { BackgroundContrast, RGBSimple } from './colors.d'
-import { ValueConfig } from '../data/data.d'
+import { BackgroundContrast, RGBSimple, ValueConfig } from '../../types'
 
 /**
  * Used to filter random colour rgb values and ensure high contrast against background.
@@ -17,7 +16,7 @@ import { ValueConfig } from '../data/data.d'
 const colorFilter = (
   [r, g, b]: RGBSimple,
   backgroundContrast: BackgroundContrast = 'light',
-  brightnessBoundary: number = 170
+  brightnessBoundary = 170
 ): boolean => {
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   return {

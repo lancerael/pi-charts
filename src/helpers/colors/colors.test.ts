@@ -59,7 +59,7 @@ describe('randomPalette', () => {
 
 describe('darkerColor', () => {
   it('should darken a color', () => {
-    const newColor = randomColor()
+    const newColor = randomColor('dark')
     const darkerNewColor = darkerColor(newColor)
     verifyColor(darkerNewColor)
     expect(darkerNewColor.r).toBeLessThan(newColor.r)

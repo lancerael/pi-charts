@@ -7,15 +7,36 @@
     <style>
       body {
         background-color: rgb(51, 51, 51);
-        color: rgb(233, 233, 233)
+        color: rgb(233, 233, 233);
+        font-family: sans-serif;
+      }
+      .container {
+        position: relative;
+        width: 50%;
+        height: 25vw;
+        margin-top: 8px;
+        border: 1px solid black;
+      }
+      .pi-chart-title {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        margin: 8px 0;
+        color: rgb(29, 29, 29);
+        font-weight: bold;
+      }
+      svg {
+        background-color: #f2f7ff;
+        background: linear-gradient(#aecdff, white);
+        width: 100%;
+        height: 100%;
       }
     </style>
   </head>
   <body>
     <h1><%= htmlWebpackPlugin.options.title %></h1>
     <button onclick="window.location.reload()">New data</button>
-    <div class="container" id="container-bar-test"></div>
-    <div class="container" id="container-line-test"></div>
+    <div class="container"></div>
     <script>
       window.onload = function () {
         console.log('------UTILITIES------')
@@ -35,6 +56,7 @@
         console.log('randomPalette', pic.randomPalette())
         console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
         // colorFilter,
+        const chart = new pic.Chart({ containerSelector: '.container', label: 'Test chart' })
       }
     </script>
   </body>

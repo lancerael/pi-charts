@@ -41,4 +41,17 @@ const newArray = (
   mapper: (val: any, i?: number) => any
 ): any[] => new Array(length).fill(null).map(mapper)
 
-export { truncateString, randomNumber, newArray }
+/**
+ * Quick way to check for null values.
+ *
+ * @method exists
+ *
+ * @param value the value to check
+ * @return whether the value is not null and truthy
+ */
+const truthy = (value: any = undefined): boolean => {
+  if (value === null || value === undefined) return false
+  return Boolean(value)
+}
+
+export { truncateString, randomNumber, newArray, truthy }

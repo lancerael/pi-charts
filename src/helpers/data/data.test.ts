@@ -1,6 +1,6 @@
 import { sliceSampleData, randomData, emptyTable, transformDataKeys } from './'
 import { randomNumber, newArray } from '../'
-import { TableConfig } from './data.d'
+import { TableConfig } from '../../types'
 
 describe('sliceSampleData', () => {
   it('should return a sample from a small array using default values', () => {
@@ -43,9 +43,9 @@ describe('sliceSampleData', () => {
 describe('randomData', () => {
   it('should return a random set of data with no params', () => {
     const tableData = randomData()
-    expect(tableData.config.axisLabels.length).toBe(2)
-    expect(tableData.config.title).toBe('Random Chart Data')
-    expect(tableData.config.axisLabels.length).toEqual(2)
+    expect(tableData.label).toBe('Random Chart Data')
+    expect(tableData.config?.axisLabels?.length).toBe(2)
+    expect(tableData.config?.axisLabels?.length).toEqual(2)
     expect(tableData.config.values[0].name).toBe('Type 0')
     expect(tableData.data[0].label).toBe('Item 0')
     expect(tableData.data[0].values[0]).toBeLessThanOrEqual(200)
@@ -66,8 +66,8 @@ describe('randomData', () => {
 describe('emptyTable', () => {
   it('should return an empty table', () => {
     expect(emptyTable()).toEqual({
+      label: '',
       config: {
-        title: '',
         axisLabels: ['', ''],
         values: [],
         trim: true,
@@ -80,7 +80,6 @@ describe('emptyTable', () => {
 describe('transformDataKeys', () => {
   it('should transform known data keys', () => {
     const config: TableConfig = {
-      title: 'Test',
       axisKeys: ['k3'],
       axisLabels: ['y', 'x'],
       values: [
@@ -110,7 +109,6 @@ describe('transformDataKeys', () => {
 
   it('should handle incorrectly formed config', () => {
     const config: TableConfig = {
-      title: 'Test',
       axisLabels: ['y', 'x'],
       values: [
         {
@@ -135,7 +133,6 @@ describe('transformDataKeys', () => {
 
   it('should handle incorrectly formed data', () => {
     const config: TableConfig = {
-      title: 'Test',
       axisKeys: ['k3'],
       axisLabels: ['y', 'x'],
       values: [
@@ -155,5 +152,12 @@ describe('transformDataKeys', () => {
     const transformedData = transformDataKeys(config, data)
     expect(transformedData[0].values).toEqual([4, 0])
     expect(transformedData[0].label).toEqual('AXIS KEY MISMATCH')
+  })
+
+  it('should handle missing config', () => {
+    const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
+    const transformedData = transformDataKeys(undefined, data)
+    // @ts-ignore
+    expect(transformedData).toEqual(data)
   })
 })
