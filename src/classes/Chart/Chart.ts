@@ -286,7 +286,7 @@ class Chart {
   private readonly draw = (): void => {
     this.updateDimensions()
     this.renderChart()
-    console.log('resizeOffset', this.resizeOffset)
+    // console.log('resizeOffset', this.resizeOffset)
   }
 
   /**
