@@ -1,5 +1,6 @@
-import { truthy } from '../../helpers'
-import style from './style'
+import { truthy, throttle } from '../../helpers'
+import { Timeout } from '../../types'
+import { style } from './style'
 
 /**
  * The Tooltip
@@ -7,34 +8,34 @@ import style from './style'
  * @class Tooltip
  * @constructor
  */
-export default class Tooltip {
+class Tooltip {
   /**
    * DOM reference to container element
    *
    * @property container
    */
-  container: HTMLElement
+  private readonly container: HTMLElement
 
   /**
    * DOM reference to tooltip's main element
    *
    * @property tooltip
    */
-  tooltip: HTMLElement
+  private tooltip: HTMLElement
 
   /**
    * Tooltip's main timeout to close tooltip
    *
    * @property showTimeout
    */
-  showTimeout: ReturnType<typeof setTimeout> | undefined
+  private showTimeout: Timeout | undefined
 
   /**
    * Tooltip's sub timeout to hide tooltip
    *
    * @property hideTimeout
    */
-  hideTimeout: ReturnType<typeof setTimeout> | undefined
+  private hideTimeout: Timeout | undefined
 
   /**
    * Constructor function that sets up the local object.
@@ -49,7 +50,7 @@ export default class Tooltip {
       this.tooltip = document.createElement('div')
       this.tooltip.className = 'pic-tooltip'
       this.container.appendChild(this.tooltip)
-      this.container.appendChild(style)
+      style()
     } else {
       throw new Error('The tooltip has no valid container element.')
     }
@@ -63,31 +64,8 @@ export default class Tooltip {
    */
   ping = (contents: string[], event: MouseEvent): void => {
     const content = `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
-    const { devicePixelRatio: zoom = 0 } = window ?? {}
-    const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
-    const containerEdges = this.container.getBoundingClientRect()
-    const pageOffsetX = containerEdges.left - 15
-    const pageOffsetY = containerEdges.top
-    const { clientX, clientY } = event
     this.tooltip.innerHTML = content
-    if (containerEdges.width + pageOffsetX - clientX < 90) {
-      this.tooltip.style.left = 'auto'
-      this.tooltip.style.right = `${
-        containerEdges.width - clientX + pageOffsetX + 25
-      }px`
-    } else {
-      this.tooltip.style.left = `${clientX - pageOffsetX}px`
-      this.tooltip.style.right = 'auto'
-    }
-    if (containerEdges.height + pageOffsetY - clientY < 35) {
-      this.tooltip.style.top = 'auto'
-      this.tooltip.style.bottom = `${
-        containerEdges.height - clientY + pageOffsetY
-      }px`
-    } else {
-      this.tooltip.style.top = `${clientY / zoomDivider - pageOffsetY}px`
-      this.tooltip.style.bottom = 'auto'
-    }
+    this.move(event)
     this.tooltip.style.visibility = 'visible'
     this.tooltip.style.opacity = '0.9'
     this.cleanup()
@@ -95,6 +73,26 @@ export default class Tooltip {
       this.hide()
     }, 5000)
   }
+
+  move = throttle((event: MouseEvent): void => {
+    // const { devicePixelRatio: zoom = 0 } = window ?? {}
+    // const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
+    const offset = 10
+    const { left, width, top, height } = this.container.getBoundingClientRect()
+    const {
+      width: ttWidth,
+      height: ttHeight,
+    } = this.tooltip.getBoundingClientRect()
+    const { clientX: x, clientY: y } = event
+    const xOverflow = width + left - x < ttWidth + offset
+    const yOverflow = height + top - y < ttHeight + offset
+    this.tooltip.style.left = `${
+      x - left + (xOverflow ? -ttWidth - offset : offset)
+    }px`
+    this.tooltip.style.top = `${
+      y - top + (yOverflow ? -ttHeight - offset : offset)
+    }px`
+  })
 
   hide = (): void => {
     this.cleanup()
@@ -109,3 +107,5 @@ export default class Tooltip {
     if (this.hideTimeout !== undefined) clearTimeout(this.hideTimeout)
   }
 }
+
+export { Tooltip }

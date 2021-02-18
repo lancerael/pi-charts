@@ -1,4 +1,18 @@
-import { truncateString, randomNumber, newArray, truthy } from './'
+import {
+  truncateString,
+  randomNumber,
+  newArray,
+  truthy,
+  css,
+  throttle,
+} from './'
+import jsdom from 'jsdom'
+import fs from 'fs'
+
+const index = fs.readFileSync('demo/index.html', 'utf-8')
+const { JSDOM } = jsdom
+const dom = new JSDOM(index)
+global.document = dom.window.document
 
 describe('truncateString', () => {
   it('should truncate a string', () => {
@@ -67,5 +81,33 @@ describe('truthy', () => {
   it('should handle undefined', () => {
     expect(truthy(undefined)).toBe(false)
     expect(truthy()).toBe(false)
+  })
+})
+
+describe('css', () => {
+  it('should parse the template', () => {
+    const color = 'red'
+    const style = css`
+      h1 {
+        color: ${color};
+      }
+    `
+    expect(style.replace(/( |\r\n|\n|\r)/gm, '')).toBe('h1{color:red;}')
+  })
+})
+
+describe('throttle', () => {
+  it('should throttle the function', () => {
+    const dummy = {
+      myFunction: () => true,
+    }
+    const throttledFunction = throttle(dummy.myFunction)
+    spyOn(dummy, 'myFunction')
+    const first = throttledFunction()
+    const second = throttledFunction()
+    const third = throttledFunction()
+    expect(first).toBe(true)
+    expect(second).not.toBe(true)
+    expect(third).not.toBe(true)
   })
 })

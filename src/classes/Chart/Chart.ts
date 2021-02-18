@@ -1,6 +1,6 @@
 import { select, Selection } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
-import Tooltip from '../Tooltip'
+import { Tooltip } from '../Tooltip'
 import { addColorsToConfig, transformDataKeys, truthy } from '../../helpers'
 import { TableConfig, TableData, ChartParams } from '../../types'
 
@@ -153,17 +153,14 @@ class Chart {
     this.initialWidth = this.width
     if (config !== undefined) this.setConfig('default', config)
     if (data !== undefined) this.setData('default', data, 'default')
-    if (this.tooltip !== undefined) {
-      select(this.container)
-        .on('mousemove', (e, d) => {
-          // @ts-expect-error - temp
-          this.tooltip.ping(['something', 'name', '123'], e)
-        })
-        .on('mouseout', (e, d) => {
-          // @ts-expect-error - temp
-          this.tooltip.hide()
-        })
-    }
+    /* FOR DEVELOPMENT OF TOOLTIP ONLY */
+    // select(this.container)
+    //   .on('mousemove', (e, d) => {
+    //     this.tooltip.ping(['something', 'name', '123'], e)
+    //   })
+    //   .on('mouseout', (e, d) => {
+    //     this.tooltip.hide()
+    //   })
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Chart } from './Chart'
+import { Chart } from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
 import { randomData } from '../../helpers'
@@ -114,7 +114,7 @@ describe('Chart', () => {
       containerElement: document.createElement('div'),
       label,
     })
-    // @ts-expect-error
+    // @ts-expect-error - forcing incorrect usage for test
     delete config.values
     expect(() => chart.setConfig('myConfig', config)).toThrow(
       new Error('No valid configuration provided for chart.')
@@ -128,7 +128,7 @@ describe('Chart', () => {
       label,
     })
     chart.setConfig('myConfig', config)
-    // @ts-expect-error
+    // @ts-expect-error - forcing incorrect usage for test
     expect(() => chart.setData('myData', 'data', 'myConfig')).toThrow(
       new Error('No valid data provided for chart.')
     )
