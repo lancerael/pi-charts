@@ -157,7 +157,7 @@ describe('transformDataKeys', () => {
   it('should handle missing config', () => {
     const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
     const transformedData = transformDataKeys(undefined, data)
-    // @ts-ignore
+    // @ts-expect-error
     expect(transformedData).toEqual(data)
   })
 })

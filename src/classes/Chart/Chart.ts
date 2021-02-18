@@ -1,5 +1,6 @@
 import { select, Selection } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
+import Tooltip from '../Tooltip'
 import { addColorsToConfig, transformDataKeys, truthy } from '../../helpers'
 import { TableConfig, TableData, ChartParams } from '../../types'
 
@@ -51,14 +52,7 @@ class Chart {
    *
    * @property d3Title
    */
-  private readonly title: Selection<HTMLDivElement, any, any, any>
-
-  /**
-   * Chart's tooltip object
-   *
-   * @property tooltip
-   */
-  private readonly tooltip: any /* !!!!!!!!!!!!!!!!!! */
+  private title: Selection<HTMLDivElement, any, any, any> | undefined
 
   /**
    * The current calculated width of the chart
@@ -131,6 +125,13 @@ class Chart {
   private resizeOffset = 0
 
   /**
+   * The chart's tooltip object.
+   *
+   * @property tooltip
+   */
+  private tooltip: Tooltip | undefined
+
+  /**
    * Constructor function that sets up the local object.
    *
    * @method constructor
@@ -147,31 +148,44 @@ class Chart {
     data,
   }: ChartParams) {
     this.label = label
-    this.setContainer(
-      containerElement ?? document.querySelector(containerSelector)
-    )
-    this.title = select(this.container)
-      .append('div')
-      .attr('class', 'pi-chart-title')
-    this.svgElement.setAttribute('class', 'pi-chart')
-    this.container.appendChild(this.svgElement)
-    this.resizeWatcher.observe(this.container)
+    this.init(containerElement ?? document.querySelector(containerSelector))
     this.draw()
     this.initialWidth = this.width
     if (config !== undefined) this.setConfig('default', config)
     if (data !== undefined) this.setData('default', data, 'default')
+    if (this.tooltip !== undefined) {
+      select(this.container)
+        .on('mousemove', (e, d) => {
+          // @ts-expect-error - temp
+          this.tooltip.ping(['something', 'name', '123'], e)
+        })
+        .on('mouseout', (e, d) => {
+          // @ts-expect-error - temp
+          this.tooltip.hide()
+        })
+    }
   }
 
   /**
-   * Sets the local container object.
+   * Sets up the container object and SVG.
    *
-   * @method setContainer
+   * @method init
    * @param container Required DOM element
    * @throws {Error} invalid DOM element
    */
-  private setContainer(container: HTMLElement | null): void {
+  private init(container: HTMLElement | null): void {
     if (container !== null && truthy(container?.nodeName)) {
       this.container = container
+      this.title = select(this.container)
+        .append('div')
+        .attr('class', 'pic-title')
+      this.svgSelection
+        .attr('class', 'pic-svg')
+        .attr('width', '100%')
+        .attr('height', '100%')
+      this.container.appendChild(this.svgElement)
+      this.tooltip = new Tooltip(this.container)
+      this.resizeWatcher.observe(this.container)
     } else {
       throw new Error('No valid DOM element or selector provided for chart.')
     }
@@ -270,7 +284,7 @@ class Chart {
    * @method renderChart
    */
   private renderChart(): void {
-    if (truthy(this.title) && truthy(this.label)) {
+    if (this.title !== undefined && truthy(this.label)) {
       this.title.text(this.label)
       // to be continued...
     } else {
