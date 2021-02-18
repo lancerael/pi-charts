@@ -28,9 +28,11 @@ describe('sliceSampleData', () => {
 
   it('should handle data that is shorter than max but still able to truncate', () => {
     const data = [2, 5, 8, 3, 4, 6]
-    const sample = sliceSampleData(data)
-    expect(sample.length).toBeGreaterThanOrEqual(3)
-    expect(sample.length).toBeLessThanOrEqual(6)
+    for (let x = 0; x < 10; x++) {
+      const sample = sliceSampleData(data)
+      expect(sample.length).toBeGreaterThanOrEqual(3)
+      expect(sample.length).toBeLessThanOrEqual(6)
+    }
   })
 
   it('should handle data that is already the minimum length', () => {
@@ -157,7 +159,7 @@ describe('transformDataKeys', () => {
   it('should handle missing config', () => {
     const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
     const transformedData = transformDataKeys(undefined, data)
-    // @ts-expect-error
+    // @ts-expect-error - forcing error for test
     expect(transformedData).toEqual(data)
   })
 })

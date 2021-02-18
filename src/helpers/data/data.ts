@@ -26,7 +26,7 @@ const sliceSampleData = (
     throw new Error('Data set is too short to sample.')
   } else if (dataSet.length === minLength) return dataSet
   const isShortData = maxLength > dataSet.length
-  const wiggleRoom = (dataSet.length - minLength) / 2
+  const wiggleRoom = dataSet.length - minLength
   const start = randomNumber(
     0,
     isShortData ? wiggleRoom : dataSet.length - maxLength
