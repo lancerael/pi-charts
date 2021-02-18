@@ -54,4 +54,45 @@ const truthy = (value: any = undefined): boolean => {
   return Boolean(value)
 }
 
-export { truncateString, randomNumber, newArray, truthy }
+/**
+ * Make a theme and add the style to the DOM
+ *
+ * @method css
+ *
+ * @param styles the array of template strings
+ * @param themes an array of theme values to substitute
+ */
+const css = (styles: TemplateStringsArray, ...themes: string[]): string => {
+  const style = document.createElement('style')
+  const parsedCss = styles
+    .map((style, i) => `${style}${themes[i] ?? ''}`)
+    .join('')
+  style.innerHTML = parsedCss
+  document.body.appendChild(style)
+  return parsedCss
+}
+
+/**
+ * Throttle a method to prevent spamming
+ *
+ * @method throttle
+ *
+ * @param callback the callback to fire when not throttled
+ * @param timeout the amount of time to wait in milliseconds
+ */
+const throttle = (callback: any, timeout = 15): any => {
+  let throttled = false
+  return (...args: any[]) => {
+    let val
+    if (!throttled) {
+      val = callback.apply(this, args)
+      throttled = true
+      setTimeout(() => {
+        throttled = false
+      }, timeout)
+    }
+    return val
+  }
+}
+
+export { truncateString, randomNumber, newArray, truthy, css, throttle }
