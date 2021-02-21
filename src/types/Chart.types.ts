@@ -6,6 +6,7 @@ interface ChartParams {
   containerSelector?: string
   containerElement?: HTMLElement
   label: string
+  theme?: string
 }
 
 export { ChartParams }

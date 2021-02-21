@@ -1,6 +1,6 @@
-import { truthy, throttle } from '../../helpers'
+import { truthy, throttle, createNode } from '../../helpers'
 import { Timeout } from '../../types'
-import { style } from './style'
+import { style } from './Tooltip.style'
 
 /**
  * The Tooltip
@@ -47,9 +47,7 @@ class Tooltip {
   constructor(container: HTMLElement) {
     if (truthy(container.nodeName)) {
       this.container = container
-      this.tooltip = document.createElement('div')
-      this.tooltip.className = 'pic-tooltip'
-      this.container.appendChild(this.tooltip)
+      this.tooltip = createNode('div', 'pic-tooltip', container)
       style()
     } else {
       throw new Error('The tooltip has no valid container element.')
@@ -60,20 +58,27 @@ class Tooltip {
    * Ping the tooltip with data and location
    *
    * @method ping
-   * @param {Array} contents values or string for content
+   * @param contents values or string for content
+   * @param event the bworser event object for mouse move
    */
   ping = (contents: string[], event: MouseEvent): void => {
     const content = `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
     this.tooltip.innerHTML = content
-    this.move(event)
     this.tooltip.style.visibility = 'visible'
     this.tooltip.style.opacity = '0.9'
+    this.move(event)
     this.cleanup()
     this.showTimeout = setTimeout(() => {
       this.hide()
     }, 5000)
   }
 
+  /**
+   * Move the tooltip based on the mouse event location
+   *
+   * @method throttle
+   * @param event the bworser event object for mouse move
+   */
   move = throttle((event: MouseEvent): void => {
     // const { devicePixelRatio: zoom = 0 } = window ?? {}
     // const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
@@ -94,6 +99,11 @@ class Tooltip {
     }px`
   })
 
+  /**
+   * Hide the tooltip
+   *
+   * @method hide
+   */
   hide = (): void => {
     this.cleanup()
     this.tooltip.style.opacity = '0'
@@ -102,6 +112,11 @@ class Tooltip {
     }, 500)
   }
 
+  /**
+   * Clean up the timeouts
+   *
+   * @method hide
+   */
   cleanup = (): void => {
     if (this.showTimeout !== undefined) clearTimeout(this.showTimeout)
     if (this.hideTimeout !== undefined) clearTimeout(this.hideTimeout)

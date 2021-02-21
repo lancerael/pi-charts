@@ -2,7 +2,9 @@ import { select, Selection } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
 import { Tooltip } from '../Tooltip'
 import { addColorsToConfig, transformDataKeys, truthy } from '../../helpers'
+import { publishTheme } from '../../theming'
 import { TableConfig, TableData, ChartParams } from '../../types'
+import { style } from './Chart.style'
 
 /**
  * Used to initialise the canvas that will contain all the chart's SVG content
@@ -146,6 +148,7 @@ class Chart {
     containerSelector = '',
     config,
     data,
+    theme = 'light',
   }: ChartParams) {
     this.label = label
     this.init(containerElement ?? document.querySelector(containerSelector))
@@ -153,12 +156,16 @@ class Chart {
     this.initialWidth = this.width
     if (config !== undefined) this.setConfig('default', config)
     if (data !== undefined) this.setData('default', data, 'default')
+    publishTheme(theme)
+    style()
     /* FOR DEVELOPMENT OF TOOLTIP ONLY */
     // select(this.container)
     //   .on('mousemove', (e, d) => {
+    //     // @ts-expect-error - wip
     //     this.tooltip.ping(['something', 'name', '123'], e)
     //   })
     //   .on('mouseout', (e, d) => {
+    //     // @ts-expect-error - wip
     //     this.tooltip.hide()
     //   })
   }

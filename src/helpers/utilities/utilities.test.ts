@@ -3,8 +3,8 @@ import {
   randomNumber,
   newArray,
   truthy,
-  css,
   throttle,
+  createNode,
 } from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
@@ -84,18 +84,6 @@ describe('truthy', () => {
   })
 })
 
-describe('css', () => {
-  it('should parse the template', () => {
-    const color = 'red'
-    const style = css`
-      h1 {
-        color: ${color};
-      }
-    `
-    expect(style.replace(/( |\r\n|\n|\r)/gm, '')).toBe('h1{color:red;}')
-  })
-})
-
 describe('throttle', () => {
   it('should throttle the function', () => {
     const dummy = {
@@ -109,5 +97,19 @@ describe('throttle', () => {
     expect(first).toBe(true)
     expect(second).not.toBe(true)
     expect(third).not.toBe(true)
+  })
+})
+
+describe('createNode', () => {
+  it('should create a new dom node', () => {
+    expect(createNode('div').nodeName).toBe('DIV')
+  })
+  it('should create a new dom node with a class', () => {
+    expect(createNode('div', 'my-node').getAttribute('class')).toBe('my-node')
+  })
+  it('should create append new dom node to parent', () => {
+    const parent = document.createElement('div')
+    createNode('div', 'child', parent)
+    expect(parent.querySelectorAll('.child').length).toBe(1)
   })
 })

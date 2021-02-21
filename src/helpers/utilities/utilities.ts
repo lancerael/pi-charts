@@ -55,24 +55,6 @@ const truthy = (value: any = undefined): boolean => {
 }
 
 /**
- * Make a theme and add the style to the DOM
- *
- * @method css
- *
- * @param styles the array of template strings
- * @param themes an array of theme values to substitute
- */
-const css = (styles: TemplateStringsArray, ...themes: string[]): string => {
-  const style = document.createElement('style')
-  const parsedCss = styles
-    .map((style, i) => `${style}${themes[i] ?? ''}`)
-    .join('')
-  style.innerHTML = parsedCss
-  document.body.appendChild(style)
-  return parsedCss
-}
-
-/**
  * Throttle a method to prevent spamming
  *
  * @method throttle
@@ -95,4 +77,24 @@ const throttle = (callback: any, timeout = 15): any => {
   }
 }
 
-export { truncateString, randomNumber, newArray, truthy, css, throttle }
+/**
+ * Used to create a new DOM node and append to parent
+ *
+ * @method createNode
+ *
+ * @param type the tag name of the node
+ * @param className the class to apply to the node
+ * @param parent the place where we append the node
+ */
+const createNode = (
+  type: string,
+  className = '',
+  parent?: HTMLElement
+): HTMLElement => {
+  const domNode = document.createElement(type)
+  domNode.className = className
+  parent?.appendChild(domNode)
+  return domNode
+}
+
+export { truncateString, randomNumber, newArray, truthy, throttle, createNode }
