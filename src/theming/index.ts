@@ -1,2 +1,2 @@
 export * from './theming'
-export * from './styles'
+export * from './mixins'

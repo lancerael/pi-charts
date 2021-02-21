@@ -77,4 +77,24 @@ const throttle = (callback: any, timeout = 15): any => {
   }
 }
 
-export { truncateString, randomNumber, newArray, truthy, throttle }
+/**
+ * Used to create a new DOM node and append to parent
+ *
+ * @method createNode
+ *
+ * @param type the tag name of the node
+ * @param className the class to apply to the node
+ * @param parent the place where we append the node
+ */
+const createNode = (
+  type: string,
+  className = '',
+  parent?: HTMLElement
+): HTMLElement => {
+  const domNode = document.createElement(type)
+  domNode.className = className
+  parent?.appendChild(domNode)
+  return domNode
+}
+
+export { truncateString, randomNumber, newArray, truthy, throttle, createNode }

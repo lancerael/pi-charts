@@ -1,4 +1,11 @@
-import { truncateString, randomNumber, newArray, truthy, throttle } from './'
+import {
+  truncateString,
+  randomNumber,
+  newArray,
+  truthy,
+  throttle,
+  createNode,
+} from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
@@ -92,3 +99,9 @@ describe('throttle', () => {
     expect(third).not.toBe(true)
   })
 })
+
+// describe('createNode', () => {
+//   it('should create a new dom node', () => {
+//     expect(typeof createNode('dom')).toBe('node')
+//   })
+// })
