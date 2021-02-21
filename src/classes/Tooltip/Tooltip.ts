@@ -58,7 +58,8 @@ class Tooltip {
    * Ping the tooltip with data and location
    *
    * @method ping
-   * @param {Array} contents values or string for content
+   * @param contents values or string for content
+   * @param event the bworser event object for mouse move
    */
   ping = (contents: string[], event: MouseEvent): void => {
     const content = `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
@@ -72,6 +73,12 @@ class Tooltip {
     }, 5000)
   }
 
+  /**
+   * Move the tooltip based on the mouse event location
+   *
+   * @method throttle
+   * @param event the bworser event object for mouse move
+   */
   move = throttle((event: MouseEvent): void => {
     // const { devicePixelRatio: zoom = 0 } = window ?? {}
     // const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
@@ -92,6 +99,11 @@ class Tooltip {
     }px`
   })
 
+  /**
+   * Hide the tooltip
+   *
+   * @method hide
+   */
   hide = (): void => {
     this.cleanup()
     this.tooltip.style.opacity = '0'
@@ -100,6 +112,11 @@ class Tooltip {
     }, 500)
   }
 
+  /**
+   * Clean up the timeouts
+   *
+   * @method hide
+   */
   cleanup = (): void => {
     if (this.showTimeout !== undefined) clearTimeout(this.showTimeout)
     if (this.hideTimeout !== undefined) clearTimeout(this.hideTimeout)

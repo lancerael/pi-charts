@@ -66,7 +66,8 @@ const randomColor = (
  * @param length the size of the palette
  * @return list of randomly generated RGB objects
  */
-const randomPalette = (length = 10): RGBColor[] => newArray(length, randomColor)
+const randomPalette = (length = 10): RGBColor[] =>
+  newArray(length, () => randomColor())
 
 /**
  * Returns a darker version of a color

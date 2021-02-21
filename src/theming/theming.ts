@@ -1,31 +1,19 @@
 import { Theme, ThemeList } from '../types'
-import { truthy } from '../helpers/utilities'
+import { truthy, createNode } from '../helpers/utilities'
 import dark from './themes/dark.json'
 import light from './themes/light.json'
 
 const themes: ThemeList = { dark, light }
 
 /**
- * Add a custom theme
+ * Adds CSS to style tag, creating/replacing if necessarry
  *
- * @method setTheme
+ * @method addStyleToDom
  *
- * @param themeName the ID for the theme
- * @param theme the object containing the theme
+ * @param selector selector for later identification of style tag
+ * @param css the CSS to be added
+ * @param replace whether to replace or append new style
  */
-const addTheme = (themeName: string, theme: Theme): Theme =>
-  (themes[themeName] = theme)
-
-const parseThemeVariables = (themeName: string): string => {
-  const variableStyle: string = Object.entries(themes[themeName]).map(
-    ([key, val]: [string, string]): string => `--${key}: ${val};`
-  ).join(`
-  `)
-  return `:root {
-    ${variableStyle}
-  }`
-}
-
 const addStyleToDom = (
   selector: string,
   css: string,
@@ -33,15 +21,52 @@ const addStyleToDom = (
 ): void => {
   let styleTag = document.querySelector(`[data-selector=${selector}]`)
   if (styleTag === null) {
-    styleTag = document.createElement('style')
+    styleTag = createNode('style', '', document.head)
     styleTag.setAttribute('data-selector', selector)
-    document.head.appendChild(styleTag)
   }
-  styleTag.innerHTML = `${truthy(replace) ? '' : styleTag.innerHTML} ${css}`
+  if (styleTag.innerHTML.match(css) === null) {
+    styleTag.innerHTML = `${truthy(replace) ? '' : styleTag.innerHTML} ${css}`
+  }
 }
 
-const setTheme = (themeName: string): void => {
-  addStyleToDom('pic-variables', parseThemeVariables(themeName), true)
+/**
+ * Add a custom theme
+ *
+ * @method addTheme
+ *
+ * @param themeName the ID for the theme
+ * @param theme the object containing the theme
+ * @return the new theme
+ */
+const addTheme = (themeName: string, theme: Theme): Theme =>
+  (themes[themeName] = theme)
+
+/**
+ * Gets a theme
+ *
+ * @method getTheme
+ *
+ * @param themeName the ID for the theme
+ * @return the requested theme
+ */
+const getTheme = (themeName: string): Theme => themes[themeName]
+
+/**
+ * Updates the CSS theme variables with the selected theme
+ *
+ * @method publishTheme
+ *
+ * @param themeName the ID for the theme
+ * @param theme the object containing the theme
+ * @return the new theme
+ */
+const publishTheme = (themeName: string): string => {
+  let parsedCss = Object.entries(themes[themeName])
+    .map(([key, val]: [string, string]): string => `--${key}: ${val};`)
+    .join('')
+  parsedCss = `:root { ${parsedCss} }`
+  addStyleToDom('pic-variables', parsedCss, true)
+  return parsedCss
 }
 
 /**
@@ -60,4 +85,4 @@ const css = (styles: TemplateStringsArray, ...themes: string[]): string => {
   return parsedCss
 }
 
-export { addTheme, setTheme, css }
+export { addStyleToDom, addTheme, getTheme, publishTheme, css }

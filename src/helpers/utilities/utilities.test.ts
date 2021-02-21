@@ -100,8 +100,16 @@ describe('throttle', () => {
   })
 })
 
-// describe('createNode', () => {
-//   it('should create a new dom node', () => {
-//     expect(typeof createNode('dom')).toBe('node')
-//   })
-// })
+describe('createNode', () => {
+  it('should create a new dom node', () => {
+    expect(createNode('div').nodeName).toBe('DIV')
+  })
+  it('should create a new dom node with a class', () => {
+    expect(createNode('div', 'my-node').getAttribute('class')).toBe('my-node')
+  })
+  it('should create append new dom node to parent', () => {
+    const parent = document.createElement('div')
+    createNode('div', 'child', parent)
+    expect(parent.querySelectorAll('.child').length).toBe(1)
+  })
+})
