@@ -1,4 +1,4 @@
-import { truthy, throttle } from '../../helpers'
+import { truthy, throttle, createNode } from '../../helpers'
 import { Timeout } from '../../types'
 import { style } from './style'
 
@@ -47,9 +47,7 @@ class Tooltip {
   constructor(container: HTMLElement) {
     if (truthy(container.nodeName)) {
       this.container = container
-      this.tooltip = document.createElement('div')
-      this.tooltip.className = 'pic-tooltip'
-      this.container.appendChild(this.tooltip)
+      this.tooltip = createNode('div', 'pic-tooltip', container)
       style()
     } else {
       throw new Error('The tooltip has no valid container element.')
@@ -65,9 +63,9 @@ class Tooltip {
   ping = (contents: string[], event: MouseEvent): void => {
     const content = `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
     this.tooltip.innerHTML = content
-    this.move(event)
     this.tooltip.style.visibility = 'visible'
     this.tooltip.style.opacity = '0.9'
+    this.move(event)
     this.cleanup()
     this.showTimeout = setTimeout(() => {
       this.hide()

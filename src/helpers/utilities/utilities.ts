@@ -95,4 +95,23 @@ const throttle = (callback: any, timeout = 15): any => {
   }
 }
 
-export { truncateString, randomNumber, newArray, truthy, css, throttle }
+const createNode = (
+  type: string,
+  className: string,
+  parent: HTMLElement
+): HTMLElement => {
+  const domNode = document.createElement(type)
+  domNode.className = className
+  parent.appendChild(domNode)
+  return domNode
+}
+
+export {
+  truncateString,
+  randomNumber,
+  newArray,
+  truthy,
+  css,
+  throttle,
+  createNode,
+}
