@@ -1,6 +1,6 @@
 import { truthy, throttle } from '../../helpers'
 import { Timeout } from '../../types'
-import { style } from './style'
+import { style } from './Tooltip.style'
 
 /**
  * The Tooltip

@@ -1,11 +1,4 @@
-import {
-  truncateString,
-  randomNumber,
-  newArray,
-  truthy,
-  css,
-  throttle,
-} from './'
+import { truncateString, randomNumber, newArray, truthy, throttle } from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
@@ -81,18 +74,6 @@ describe('truthy', () => {
   it('should handle undefined', () => {
     expect(truthy(undefined)).toBe(false)
     expect(truthy()).toBe(false)
-  })
-})
-
-describe('css', () => {
-  it('should parse the template', () => {
-    const color = 'red'
-    const style = css`
-      h1 {
-        color: ${color};
-      }
-    `
-    expect(style.replace(/( |\r\n|\n|\r)/gm, '')).toBe('h1{color:red;}')
   })
 })
 
