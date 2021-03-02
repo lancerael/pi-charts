@@ -1,4 +1,5 @@
 import { addStyleToDom, addTheme, getTheme, publishTheme, css } from './'
+import { compress } from '../helpers/utilities'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
@@ -43,6 +44,6 @@ describe('css', () => {
         color: ${color};
       }
     `
-    expect(style.replace(/( |\r\n|\n|\r)/gm, '')).toBe('h1{color:red;}')
+    expect(compress(style)).toBe('h1{color:red;}')
   })
 })

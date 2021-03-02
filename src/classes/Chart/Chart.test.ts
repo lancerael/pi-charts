@@ -19,15 +19,15 @@ describe('Chart', () => {
     div.setAttribute('id', 'test')
     document.body.appendChild(div)
     const chart = getFlatChart({
-      containerSelector: '#test',
+      container: '#test',
       label: 'Test chart',
     })
     expect(typeof chart.container).toBe('object')
   })
 
   it('should accept DOM element and initialise an empty table', () => {
-    const containerElement = document.createElement('div')
-    const chart = getFlatChart({ containerElement, label: 'Test chart' })
+    const container = document.createElement('div')
+    const chart = getFlatChart({ container, label: 'Test chart' })
     expect(typeof chart.container).toBe('object')
   })
 
@@ -35,15 +35,15 @@ describe('Chart', () => {
     expect(
       () =>
         new Chart({
-          containerSelector: 'nothing',
+          container: 'nothing',
           label: 'test',
         })
     ).toThrow(new Error('No valid DOM element or selector provided for chart.'))
   })
 
   it('should throw error for missing label', () => {
-    const containerElement = document.createElement('div')
-    expect(() => new Chart({ containerElement, label: '' })).toThrow(
+    const container = document.createElement('div')
+    expect(() => new Chart({ container, label: '' })).toThrow(
       new Error('Unable to render the chart.')
     )
   })
@@ -51,7 +51,7 @@ describe('Chart', () => {
   it('should initialise with config and data', () => {
     const { data, config, label } = randomData()
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       data,
       config,
       label,
@@ -63,7 +63,7 @@ describe('Chart', () => {
   it('should initialise then allow later addition config and data', () => {
     const { data, config, label } = randomData()
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       label,
     })
     chart.setConfig('myConfig', config)
@@ -75,7 +75,7 @@ describe('Chart', () => {
   it('should initialise then allow later addition of data', () => {
     const { data, label } = randomData()
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       label,
     })
     chart.setData('myData', data, 'myConfig')
@@ -84,7 +84,7 @@ describe('Chart', () => {
 
   it('should allow removal of config and data', () => {
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       ...randomData(),
     })
     expect(chart.configs.get('default')).toBeDefined()
@@ -97,7 +97,7 @@ describe('Chart', () => {
 
   it('should throw an error when trying to remove invalid config/data', () => {
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       ...randomData(),
     })
     expect(() => chart.deleteConfig('custom')).toThrow(
@@ -111,7 +111,7 @@ describe('Chart', () => {
   it('should throw an error for invalid config', () => {
     const { config, label } = randomData()
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       label,
     })
     // @ts-expect-error - forcing incorrect usage for test
@@ -124,7 +124,7 @@ describe('Chart', () => {
   it('should throw an error for invalid data', () => {
     const { config, label } = randomData()
     const chart = new Chart({
-      containerElement: document.createElement('div'),
+      container: document.createElement('div'),
       label,
     })
     chart.setConfig('myConfig', config)

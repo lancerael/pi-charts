@@ -5,6 +5,8 @@ import {
   truthy,
   throttle,
   createNode,
+  compress,
+  sanitise,
 } from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
@@ -111,5 +113,17 @@ describe('createNode', () => {
     const parent = document.createElement('div')
     createNode('div', 'child', parent)
     expect(parent.querySelectorAll('.child').length).toBe(1)
+  })
+})
+
+describe('string operations', () => {
+  it('should compress a string', () => {
+    expect(
+      compress(`a string with
+    newlines`)
+    ).toBe('astringwithnewlines')
+  })
+  it('should sanitise a string', () => {
+    expect(sanitise('A d!i$r%t&y string')).toBe('A dirty string')
   })
 })

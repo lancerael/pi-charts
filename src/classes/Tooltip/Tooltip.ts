@@ -61,8 +61,11 @@ class Tooltip {
    * @param contents values or string for content
    * @param event the bworser event object for mouse move
    */
-  ping = (contents: string[], event: MouseEvent): void => {
-    const content = `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
+  ping = (contents: string[] | string, event: MouseEvent): void => {
+    const content =
+      typeof contents === 'string'
+        ? contents
+        : `<strong>${contents[0]}</strong><br>${contents[1]}: <em>${contents[2]}</em>`
     this.tooltip.innerHTML = content
     this.tooltip.style.visibility = 'visible'
     this.tooltip.style.opacity = '0.9'

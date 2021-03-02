@@ -4,6 +4,7 @@ export const style = (): void => {
   css`
     .pic-svg {
       ${box}
+      min-width: 512px;
     }
 
     .pic-title {
