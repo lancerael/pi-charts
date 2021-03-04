@@ -1,8 +1,6 @@
 import { select } from 'd3-selection'
-import { scaleLinear, scaleBand, NumberValue } from 'd3-scale'
-import { min, max } from 'd3-array'
 import ResizeObserver from 'resize-observer-polyfill'
-import { Tooltip, Axis } from '../'
+import { Tooltip, Axis, Scale } from '../'
 import {
   addColorsToConfig,
   throttle,
@@ -21,7 +19,6 @@ import {
   ChartScales,
 } from '../../types'
 import { style } from './Chart.style'
-import { Scale } from '../Scale/Scale'
 
 /**
  * Used to initialise the canvas that will contain all the chart's SVG content
@@ -172,35 +169,31 @@ class Chart {
     this.initialWidth = this.dimensions.width
     if (config !== undefined) this.setConfig('default', config)
     if (data !== undefined) this.setData('default', data, 'default')
-    // console.log(JSON.stringify(data), data)
     publishTheme(theme)
     style()
-    /* FOR DEVELOPMENT ONLY */
-    this.addScale('default', { x: 'band', y: 'linear' })
-    // const myScales = this.scales.get('default')
-    // if (myScales !== undefined) {
-    this.axes.set(
-      'default',
-      new Axis({
-        d3Svg: this.d3Svg,
-        tooltip: this.tooltip,
-        dimensions: this.dimensions,
-        padding: this.padding,
-        truncate: 10,
-        axisLabels: this.configs.get('default')?.axisLabels ?? ['', ''],
-        scales: this.scales.get('default'),
-      })
-    )
+    /* DEV START */
+    // this.addScale('default', { x: 'band', y: 'linear' })
+    // const scales = this.scales.get('default')
+    // if (scales !== undefined) {
+    //   this.axes.set(
+    //     'default',
+    //     new Axis({
+    //       d3Svg: this.d3Svg,
+    //       tooltip: this.tooltip,
+    //       dimensions: this.dimensions,
+    //       padding: this.padding,
+    //       truncate: 10,
+    //       axisLabels: this.configs.get('default')?.axisLabels ?? ['', ''],
+    //       scales,
+    //     })
+    //   )
     // }
     // select(this.container)
-    //   .on('mousemove', (e, d) => {
-    //     // @ts-expect-error - wip
+    //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
-    //   })
-    //   .on('mouseout', (e, d) => {
-    //     // @ts-expect-error - wip
-    //     this.tooltip.hide()
-    //   })
+    //   )
+    //   .on('mouseout', (e, d) => this.tooltip.hide())
+    /* DEV END */
   }
 
   /**
@@ -325,6 +318,7 @@ class Chart {
         {}
       ) as ChartScales
     )
+    this.draw()
   }
 
   /**
@@ -367,11 +361,9 @@ class Chart {
     this.updateDimensions()
     this.renderChart()
     this.scales.forEach((chartScales: ChartScales) =>
-      Object.values(chartScales).forEach(
-        (scale) => scale !== undefined && scale.render()
-      )
+      Object.values(chartScales).forEach((scale) => scale.render())
     )
-    this.axes.forEach((axis: Axis) => axis.render())
+    // this.axes.forEach((axis: Axis) => axis.render())
   })
 
   /**

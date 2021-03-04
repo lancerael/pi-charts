@@ -112,8 +112,10 @@ const transformDataKeys = (
   return data.map(
     (item): TableItem => {
       item.values = config.values.map(({ key }, i): number => {
-        if (typeof key !== 'string') return item.values[i]
-        const sanitisedValue = parseInt(item[key])
+        if (typeof key !== 'string' && Array.isArray(item.values)) {
+          return item.values[i]
+        }
+        const sanitisedValue = parseInt(item[key ?? ''])
         return isNaN(sanitisedValue) ? 0 : sanitisedValue
       })
       if (Array.isArray(config.axisKeys) && typeof item.label !== 'string') {

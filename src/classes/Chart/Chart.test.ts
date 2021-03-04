@@ -133,4 +133,17 @@ describe('Chart', () => {
       new Error('No valid data provided for chart.')
     )
   })
+
+  it('should add a scale', () => {
+    const { data, config, label } = randomData()
+    const chart = new Chart({
+      container: document.createElement('div'),
+      data,
+      config,
+      label,
+    })
+    jasmine.clock().tick(600)
+    chart.addScale('default', { x: 'band', y: 'linear' })
+    expect(chart.scales.get('default')).toBeDefined()
+  })
 })

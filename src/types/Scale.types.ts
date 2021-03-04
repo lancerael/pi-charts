@@ -3,7 +3,7 @@ import { Scale } from '../classes'
 
 type AxisScale = ScaleLinear<any, any, any> | ScaleBand<any>
 
-type ChartScales = {
+interface ChartScales {
   x?: Scale
   y?: Scale
 }

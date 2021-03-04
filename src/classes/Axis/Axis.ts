@@ -1,5 +1,4 @@
-import { axisBottom, axisLeft, AxisScale } from 'd3-axis'
-import { NumberValue } from 'd3-scale'
+import { axisBottom, axisLeft } from 'd3-axis'
 import { Dimensions, Padding, D3Svg, ChartScales } from '../../types'
 import { truncateString, truthy } from '../../helpers'
 import { Tooltip } from '../Tooltip'
@@ -7,7 +6,7 @@ import { AxisParams } from '../../types/Axis.types'
 import { style } from './Axis.style'
 
 /**
- * The Axis object is used to instantiate x and y axes, as well as labels
+ * The Axis object is used to instantiate x and y axes, and the chart labels
  *
  * @class Axis
  * @constructor
@@ -86,9 +85,9 @@ class Axis {
     scales,
   }: AxisParams) {
     if (truthy(d3Svg)) {
+      this.dimensions = dimensions
       this.d3Svg = d3Svg
       this.tooltip = tooltip
-      this.dimensions = dimensions
       this.padding = padding
       this.truncate = truncate
       this.axisLabels = axisLabels ?? ['', '']
@@ -104,27 +103,27 @@ class Axis {
    * Master render to call all rendering methods
    *
    * @method render
-   * @chainable
    */
-  render(dimensions?: Dimensions): Axis {
+  render(dimensions?: Dimensions): void {
     if (dimensions !== undefined) this.dimensions = dimensions
-    this.renderAxisX()
-    this.renderAxisY()
-    this.renderLabels()
-    return this
+    if (this.dimensions !== undefined) {
+      this.renderAxisX()
+      this.renderAxisY()
+      this.renderLabels()
+    }
   }
 
   /**
-   * Render only the x axis
+   * Render the x axis
    *
    * @method renderAxisX
    */
   renderAxisX(): void {
-    this.d3Svg.selectAll('g.pic-x-axis').remove()
+    this.d3Svg.selectAll('g.pic-axis-x').remove()
     if (this.scales.x !== undefined) {
       this.d3Svg
         .append('g')
-        .attr('class', 'pic-x-axis')
+        .attr('class', 'pic-axis pic-axis-x')
         .call(axisBottom(this.scales.x.axisScale))
         .attr(
           'transform',
@@ -136,7 +135,7 @@ class Axis {
         .attr('x', -5)
         .attr('y', 6)
         .attr('transform', 'rotate(310)')
-        .attr('class', 'pic-x-labels')
+        .attr('class', 'pic-axis-label pic-axis-label-x')
         .text((d) => truncateString(d as string, this.truncate))
         .style('text-anchor', 'end')
         .on('mousemove', (e, d) => {
@@ -149,35 +148,35 @@ class Axis {
   }
 
   /**
-   * Render only the y axis
+   * Render the y axis
    *
    * @method renderAxisY
    */
   renderAxisY(): void {
-    this.d3Svg.selectAll('g.pic-y-axis').remove()
+    this.d3Svg.selectAll('g.pic-axis-y').remove()
     if (this.scales.y !== undefined) {
       this.d3Svg
         .append('g')
-        .attr('class', 'pic-y-axis')
+        .attr('class', 'pic-axis pic-axis-y')
         .call(axisLeft(this.scales.y.axisScale))
         .attr('transform', `translate(${this.padding.l},0)`)
-        .selectAll('.pic-y-axis .tick line')
+        .selectAll('.pic-axis-y .tick line')
         .attr('class', 'pic-line')
         .attr('x2', () => this.dimensions.innerWidth)
     }
   }
 
   /**
-   * Render only the labels
+   * Render the labels
    *
    * @method renderLabels
    */
   renderLabels(): void {
-    this.d3Svg.selectAll('text.pic-labels').remove()
+    this.d3Svg.selectAll('text.pic-label').remove()
     if (truthy(this.axisLabels[0])) {
       this.d3Svg
         .append('text')
-        .attr('class', 'pic-labels pic-labels-x')
+        .attr('class', 'pic-label pic-label-x')
         .attr('x', this.dimensions.height / -2 + this.padding.b / 2)
         .attr('y', 20)
         .attr('transform', 'rotate(-90)')
@@ -187,7 +186,7 @@ class Axis {
     if (truthy(this.axisLabels[1])) {
       this.d3Svg
         .append('text')
-        .attr('class', 'pic-labels pic-labels-y')
+        .attr('class', 'pic-label pic-label-y')
         .attr(
           'x',
           (this.dimensions.width + this.padding.l + this.padding.r) / 2
