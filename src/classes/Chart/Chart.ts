@@ -1,9 +1,23 @@
-import { select, Selection } from 'd3-selection'
+import { select } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
-import { Tooltip } from '../Tooltip'
-import { addColorsToConfig, transformDataKeys, truthy } from '../../helpers'
+import { Tooltip, Axis, Scale } from '../'
+import {
+  addColorsToConfig,
+  throttle,
+  transformDataKeys,
+  truthy,
+} from '../../helpers'
 import { publishTheme } from '../../theming'
-import { TableConfig, TableData, ChartParams } from '../../types'
+import {
+  TableConfig,
+  TableData,
+  ChartParams,
+  Dimensions,
+  Padding,
+  D3Div,
+  D3Svg,
+  ChartScales,
+} from '../../types'
 import { style } from './Chart.style'
 
 /**
@@ -13,28 +27,6 @@ import { style } from './Chart.style'
  * @constructor
  */
 class Chart {
-  /**
-   * SVG DOM object for displaying the chart
-   *
-   * @property svgElement
-   */
-  private readonly svgElement: SVGGraphicsElement = document.createElementNS(
-    'http://www.w3.org/2000/svg',
-    'svg'
-  )
-
-  /**
-   * SVG d3 object for d3 operations on the chart
-   *
-   * @property svgSelection
-   */
-  private readonly svgSelection: Selection<
-    SVGGraphicsElement,
-    any,
-    any,
-    any
-  > = select(this.svgElement)
-
   /**
    * Default time for d3 transitions on the chart
    *
@@ -47,42 +39,36 @@ class Chart {
    *
    * @property container
    */
-  private container: HTMLElement = document.createElement('div')
+  private readonly container: HTMLDivElement
+
+  /**
+   * SVG d3 object for d3 operations on the chart
+   *
+   * @property svgSelection
+   */
+  private readonly d3Svg: D3Svg
 
   /**
    * d3 reference to chart title element
    *
-   * @property d3Title
+   * @property title
    */
-  private title: Selection<HTMLDivElement, any, any, any> | undefined
+  private readonly title: D3Div
 
   /**
-   * The current calculated width of the chart
+   * The current calculated diensions of the chart
    *
-   * @property width
+   * @property dimensions
    */
-  private width = 0
-
-  /**
-   * The current calculated height of the chart
-   *
-   * @property height
-   */
-  private height = 0
-
-  /**
-   * The current calculated inner width of the chart
-   *
-   * @property innerWidth
-   */
-  private innerWidth = 0
-
-  /**
-   * The current calculated inner height of the chart
-   *
-   * @property innerHeight
-   */
-  private innerHeight = 0
+  private dimensions: Dimensions = {
+    left: 0,
+    width: 0,
+    top: 0,
+    height: 0,
+    innerWidth: 0,
+    innerHeight: 0,
+    resizeOffset: 0,
+  }
 
   /**
    * The width before any browser resize
@@ -96,7 +82,7 @@ class Chart {
    *
    * @property padding
    */
-  private readonly padding = { l: 5, r: 5, t: 5, b: 5 }
+  private readonly padding: Padding = { l: 45, r: 5, t: 25, b: 85 }
 
   /**
    * The chart's configs
@@ -113,6 +99,20 @@ class Chart {
   readonly dataSets: Map<string, TableData> = new Map()
 
   /**
+   * The chart's d3 scales
+   *
+   * @property scales
+   */
+  readonly scales: Map<string, ChartScales> = new Map()
+
+  /**
+   * The chart's d3 axes
+   *
+   * @property axes
+   */
+  readonly axes: Map<string, Axis> = new Map()
+
+  /**
    * The chart's label for display
    *
    * @property label
@@ -124,72 +124,90 @@ class Chart {
    *
    * @property resizeOffset
    */
-  private resizeOffset = 0
+  private readonly resizeOffset = 0
 
   /**
    * The chart's tooltip object.
    *
    * @property tooltip
    */
-  private tooltip: Tooltip | undefined
+  private readonly tooltip: Tooltip
 
   /**
    * Constructor function that sets up the local object.
    *
    * @method constructor
-   * @param config JSON configuration object
+   * @param label label for chart
+   * @param config configuration object
    * @param data the data to be displayed
    * @param containerElement optionally DOM node in place of ID
    * @param containerSelector selector to select DOM object
+   * @param theme the selected theme for the chart
    */
   constructor({
     label,
-    containerElement,
-    containerSelector = '',
+    container,
     config,
     data,
     theme = 'light',
   }: ChartParams) {
     this.label = label
-    this.init(containerElement ?? document.querySelector(containerSelector))
+    this.container = this.setContainer(
+      typeof container === 'string'
+        ? document.querySelector(container)
+        : container
+    )
+    this.title = select(this.container).append('div').attr('class', 'pic-title')
+    this.d3Svg = select(this.container)
+      .append('svg')
+      .attr('class', 'pic-svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+    this.resizeWatcher.observe(this.container)
+    this.tooltip = new Tooltip(this.container)
     this.draw()
-    this.initialWidth = this.width
+    this.initialWidth = this.dimensions.width
     if (config !== undefined) this.setConfig('default', config)
     if (data !== undefined) this.setData('default', data, 'default')
     publishTheme(theme)
     style()
-    /* FOR DEVELOPMENT OF TOOLTIP ONLY */
+    /* DEV START */
+    // this.addScale('default', { x: 'band', y: 'linear' })
+    // const scales = this.scales.get('default')
+    // if (scales !== undefined) {
+    //   this.axes.set(
+    //     'default',
+    //     new Axis({
+    //       d3Svg: this.d3Svg,
+    //       tooltip: this.tooltip,
+    //       dimensions: this.dimensions,
+    //       padding: this.padding,
+    //       truncate: 10,
+    //       axisLabels: this.configs.get('default')?.axisLabels ?? ['', ''],
+    //       scales,
+    //     })
+    //   )
+    // }
     // select(this.container)
-    //   .on('mousemove', (e, d) => {
-    //     // @ts-expect-error - wip
+    //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
-    //   })
-    //   .on('mouseout', (e, d) => {
-    //     // @ts-expect-error - wip
-    //     this.tooltip.hide()
-    //   })
+    //   )
+    //   .on('mouseout', (e, d) => this.tooltip.hide())
+    /* DEV END */
   }
 
   /**
    * Sets up the container object and SVG.
    *
-   * @method init
+   * @method setContainer
    * @param container Required DOM element
    * @throws {Error} invalid DOM element
    */
-  private init(container: HTMLElement | null): void {
+  private readonly setContainer = (
+    container: HTMLDivElement | null
+  ): HTMLDivElement => {
     if (container !== null && truthy(container?.nodeName)) {
-      this.container = container
-      this.title = select(this.container)
-        .append('div')
-        .attr('class', 'pic-title')
-      this.svgSelection
-        .attr('class', 'pic-svg')
-        .attr('width', '100%')
-        .attr('height', '100%')
-      this.container.appendChild(this.svgElement)
-      this.tooltip = new Tooltip(this.container)
-      this.resizeWatcher.observe(this.container)
+      return container
     } else {
       throw new Error('No valid DOM element or selector provided for chart.')
     }
@@ -204,7 +222,7 @@ class Chart {
    * @param config JSON configuration object
    * @throws {Error} missing configuration
    */
-  public setConfig(configName: string, config: TableConfig): void {
+  public setConfig = (configName: string, config: TableConfig): void => {
     if (Array.isArray(config?.values)) {
       config.values = addColorsToConfig(config.values)
       this.configs.set(configName, config)
@@ -222,7 +240,7 @@ class Chart {
    * @param configName key for the hash table
    * @throws {Error} missing configuration
    */
-  public deleteConfig(configName: string): void {
+  public deleteConfig = (configName: string): void => {
     if (truthy(this.configs.get(configName))) {
       this.configs.delete(configName)
       this.renderChart()
@@ -235,11 +253,15 @@ class Chart {
    * Add a data set for the chart.
    *
    * @method setData
-   * @param dataName array of JSON objects
+   * @param dataName name for the data set
    * @param data transform mapped data
    * @throws {Error} missing data
    */
-  public setData(dataName: string, data: TableData, configName: string): void {
+  public setData = (
+    dataName: string,
+    data: TableData,
+    configName: string
+  ): void => {
     if (Array.isArray(data)) {
       const config = this.configs.get(configName)
       const newData = Array.isArray(config?.values)
@@ -260,7 +282,7 @@ class Chart {
    * @param deleteData key for the hash table
    * @throws {Error} missing configuration
    */
-  public deleteData(dataName: string): void {
+  public deleteData = (dataName: string): void => {
     if (truthy(this.dataSets.get(dataName))) {
       this.dataSets.delete(dataName)
       this.renderChart()
@@ -270,16 +292,50 @@ class Chart {
   }
 
   /**
+   * Add a scale set for the chart.
+   *
+   * @method addScale
+   * @param scaleName array of JSON objects
+   * @param scaleTypes transform mapped data
+   * @throws {Error} missing data
+   */
+  public addScale = (
+    scaleName: string,
+    scaleTypes: { x: string; y: string }
+  ): void => {
+    this.scales.set(
+      scaleName,
+      Object.entries(scaleTypes).reduce(
+        (chartScales, [direction, scaleType]: [string, string]) => ({
+          ...chartScales,
+          [direction]: new Scale({
+            scaleType,
+            dataSet: this.dataSets.get('default'),
+            dimensions: this.dimensions,
+            padding: this.padding,
+          }),
+        }),
+        {}
+      ) as ChartScales
+    )
+    this.draw()
+  }
+
+  /**
    * Sets the local chart dimensions based on the size of the container.
    *
    * @method setDimensions
    */
-  private updateDimensions(): void {
-    this.width = this.container?.clientWidth
-    this.height = this.container?.clientHeight
-    this.innerWidth = this.width - this.padding.l - this.padding.r
-    this.innerHeight = this.height - this.padding.t - this.padding.b
-    this.resizeOffset = this.width - this.initialWidth
+  private readonly updateDimensions = (): void => {
+    const { left, width, top, height } = this.container.getBoundingClientRect()
+    const { l, r, t, b } = this.padding
+    this.dimensions.left = left
+    this.dimensions.width = width
+    this.dimensions.top = top
+    this.dimensions.height = height
+    this.dimensions.innerWidth = width - l - r
+    this.dimensions.innerHeight = height - t - b
+    this.dimensions.resizeOffset = width - this.initialWidth
   }
 
   /**
@@ -287,7 +343,7 @@ class Chart {
    *
    * @method renderChart
    */
-  private renderChart(): void {
+  private readonly renderChart = (): void => {
     if (this.title !== undefined && truthy(this.label)) {
       this.title.text(this.label)
       // to be continued...
@@ -301,11 +357,14 @@ class Chart {
    *
    * @method draw
    */
-  private readonly draw = (): void => {
+  private readonly draw = throttle((): void => {
     this.updateDimensions()
     this.renderChart()
-    // console.log('resizeOffset', this.resizeOffset)
-  }
+    this.scales.forEach((chartScales: ChartScales) =>
+      Object.values(chartScales).forEach((scale) => scale.render())
+    )
+    // this.axes.forEach((axis: Axis) => axis.render())
+  })
 
   /**
    * Watcher for the resize event

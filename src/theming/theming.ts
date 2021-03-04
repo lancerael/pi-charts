@@ -1,5 +1,5 @@
 import { Theme, ThemeList } from '../types'
-import { truthy, createNode } from '../helpers/utilities'
+import { truthy, createNode, compress, sanitise } from '../helpers/utilities'
 import dark from './themes/dark.json'
 import light from './themes/light.json'
 
@@ -19,12 +19,13 @@ const addStyleToDom = (
   css: string,
   replace?: boolean
 ): void => {
+  const clean = (val: string): string => sanitise(compress(val))
   let styleTag = document.querySelector(`[data-selector=${selector}]`)
   if (styleTag === null) {
     styleTag = createNode('style', '', document.head)
     styleTag.setAttribute('data-selector', selector)
   }
-  if (styleTag.innerHTML.match(css) === null) {
+  if (clean(styleTag.innerHTML).match(clean(css)) === null) {
     styleTag.innerHTML = `${truthy(replace) ? '' : styleTag.innerHTML} ${css}`
   }
 }

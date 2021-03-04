@@ -48,8 +48,8 @@ describe('randomData', () => {
     expect(tableData.label).toBe('Random Chart Data')
     expect(tableData.config?.axisLabels?.length).toBe(2)
     expect(tableData.config?.axisLabels?.length).toEqual(2)
-    expect(tableData.config.values[0].name).toBe('Type 0')
-    expect(tableData.data[0].label).toBe('Item 0')
+    expect(tableData.config.values[0].name).toBe('Type 1')
+    expect(tableData.data[0].label).toBe('Item 1')
     expect(tableData.data[0].values[0]).toBeLessThanOrEqual(200)
   })
 
@@ -159,6 +159,30 @@ describe('transformDataKeys', () => {
   it('should handle missing config', () => {
     const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
     const transformedData = transformDataKeys(undefined, data)
+    // @ts-expect-error - forcing error for test
+    expect(transformedData).toEqual(data)
+  })
+
+  it('should return unmapped data when keys are missing', () => {
+    const config: TableConfig = {
+      axisKeys: ['k3'],
+      axisLabels: ['y', 'x'],
+      values: [
+        {
+          name: 'K1',
+          color: 'red',
+        },
+        {
+          name: 'K2',
+          color: 'blue',
+        },
+      ],
+    }
+    const data = [
+      { k1: 4, values: [21, 45] },
+      { k1: 7, k2: 8, k3: 'nine', values: [44, 77] },
+    ]
+    const transformedData = transformDataKeys(config, data)
     // @ts-expect-error - forcing error for test
     expect(transformedData).toEqual(data)
   })

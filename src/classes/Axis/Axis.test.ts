@@ -1,0 +1,183 @@
+import { Axis, Tooltip, Scale } from '../'
+import { randomData } from '../../helpers'
+import { select } from 'd3-selection'
+import jsdom from 'jsdom'
+import fs from 'fs'
+
+const { JSDOM } = jsdom
+const index = fs.readFileSync('demo/index.html', 'utf-8')
+const dom = new JSDOM(index)
+global.document = dom.window.document
+
+const dispatchEvent = (element: HTMLElement, eventType: string): MouseEvent => {
+  const event = document.createEvent('MouseEvents')
+  event.initEvent(eventType, true, true)
+  element.dispatchEvent(event)
+  return event
+}
+
+const dimensions = {
+  left: 0,
+  width: 0,
+  top: 0,
+  height: 0,
+  innerWidth: 0,
+  innerHeight: 0,
+  resizeOffset: 0,
+}
+
+const d3Svg = select(document.body).append('svg')
+const padding = { l: 45, r: 5, t: 25, b: 85 }
+const tooltip = new Tooltip(document.body)
+const scales = {
+  x: new Scale({
+    scaleType: 'band',
+    dataSet: randomData().data,
+    dimensions,
+    padding,
+  }),
+  y: new Scale({
+    scaleType: 'linear',
+    dataSet: randomData().data,
+    dimensions,
+    padding,
+  }),
+}
+const axisLabels = ['a', 'b'] as [string, string]
+let axis
+
+describe('Axis', () => {
+  it('should create the dual Axis', () => {
+    const d3Svg = select(document.body).append('svg')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales,
+      axisLabels,
+    })
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
+  })
+
+  it('should create single x Axis', () => {
+    const d3Svg = select(document.body).append('svg')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales: { x: scales.x },
+      axisLabels: ['a', ''],
+    })
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
+  })
+
+  it('should create single y Axis', () => {
+    const d3Svg = select(document.body).append('svg')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales: { y: scales.y },
+      axisLabels: ['', 'b'],
+    })
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
+  })
+
+  it('should create axes without labels', () => {
+    const d3Svg = select(document.body).append('svg')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales,
+    })
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
+  })
+
+  it('should allow dimensions to be passed via render', () => {
+    const d3Svg = select(document.body).append('svg')
+    // @ts-expect-error - forcing incorrect usage for test
+    axis = new Axis({
+      padding,
+      d3Svg,
+      tooltip,
+      scales,
+      axisLabels,
+    })
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
+    axis.render(dimensions)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
+  })
+
+  it('should throw an error when the SVG is missing', () => {
+    // @ts-expect-error - forcing incorrect usage for test
+    expect(() => new Axis({})).toThrow(
+      new Error('Incorrect parameters provided to Axis constructor.')
+    )
+  })
+
+  it('should handle tooltip events on mouse labels', () => {
+    spyOn(tooltip, 'ping')
+    spyOn(tooltip, 'hide')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales,
+      axisLabels,
+      truncate: 2,
+    })
+    dispatchEvent(
+      d3Svg.node()?.querySelector('.pic-axis-label') as HTMLElement,
+      'mousemove'
+    )
+    expect(tooltip.ping).toHaveBeenCalled()
+    dispatchEvent(
+      d3Svg.node()?.querySelector('.pic-axis-label') as HTMLElement,
+      'mouseout'
+    )
+    expect(tooltip.hide).toHaveBeenCalled()
+  })
+
+  it('should handle not show tooltip on untruncated labels', () => {
+    const tooltip = new Tooltip(document.body)
+    spyOn(tooltip, 'ping')
+    axis = new Axis({
+      dimensions,
+      padding,
+      d3Svg,
+      tooltip,
+      scales,
+      axisLabels,
+      truncate: 200,
+    })
+    dispatchEvent(
+      d3Svg.node()?.querySelector('.pic-axis-label') as HTMLElement,
+      'mousemove'
+    )
+    expect(tooltip.ping).not.toHaveBeenCalled()
+  })
+})

@@ -12,36 +12,47 @@
       }
       .container {
         position: relative;
-        width: 50%;
+        display: inline-block;
+        min-width: 512px;
+        min-height: 256px;
+        width: 49%;
         height: 25vw;
         margin-top: 8px;
+      }
+      .container.c1 {
+        margin-right: 1.5%;
       }
     </style>
   </head>
   <body>
     <h1><%= htmlWebpackPlugin.options.title %></h1>
-    <button onclick="window.location.reload()">New data</button>
-    <div class="container"></div>
+    <div>
+      <button onclick="window.location.reload()">New data</button>
+    </div>
+    <div class="container c1"></div>
+    <div class="container c2"></div>
     <script>
       window.onload = function () {
-        console.log('------UTILITIES------')
-        console.log('truncateString', pic.truncateString('This is a full sentence', 5))
-        console.log('randomNumber', pic.randomNumber())
-        console.log('------DATA------')
-        console.log('emptyTable', pic.emptyTable())
-        const tableData = pic.randomData(10, 10, 10, 20)
-        const { config, data } = tableData
-        console.log('randomData', tableData)
-        console.log('sliceSampleData', pic.sliceSampleData(data))
-        console.log('transformDataKeys', pic.transformDataKeys(config, data))
-        console.log('------COLORS------')
-        const color = pic.randomColor()
-        console.log('randomColor', color)
-        console.log('darkerColor', pic.darkerColor(color))
-        console.log('randomPalette', pic.randomPalette())
-        console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
+        // console.log('------UTILITIES------')
+        // console.log('truncateString', pic.truncateString('This is a full sentence', 5))
+        // console.log('randomNumber', pic.randomNumber())
+        // console.log('------DATA------')
+        // console.log('emptyTable', pic.emptyTable())
+        // const tableData = pic.randomData(10, 10, 10, 20)
+        // const { config, data } = tableData
+        // console.log('randomData', tableData)
+        // console.log('sliceSampleData', pic.sliceSampleData(data))
+        // console.log('transformDataKeys', pic.transformDataKeys(config, data))
+        // console.log('------COLORS------')
+        // const color = pic.randomColor()
+        // console.log('randomColor', color)
+        // console.log('darkerColor', pic.darkerColor(color))
+        // console.log('randomPalette', pic.randomPalette())
+        // console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
         // colorFilter,
-        const chart = new pic.Chart({ containerSelector: '.container', label: 'Test chart' })
+        const chart = new pic.Chart({ container: '.container.c1', ...pic.randomData() })
+        const chart2 = new pic.Chart({ container: '.container.c2', ...pic.randomData()  })
+        // console.log(pic.newArray(5, () => pic.randomNumber(5, 55)))
       }
     </script>
   </body>

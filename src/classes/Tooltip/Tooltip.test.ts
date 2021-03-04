@@ -34,7 +34,19 @@ describe('Tooltip', () => {
     )
   })
 
-  it('should ping the tooltip and hide it after the timeout', () => {
+  it('should ping the tooltip with plain content and overflow', () => {
+    const container = document.createElement('div')
+    const tooltip = new Tooltip(container)
+    const tooltipElement = container.querySelector('div')
+    tooltip.ping('hello', {
+      ...dispatchEvent(container, 'mousemove'),
+      clientX: -15,
+      clientY: -15,
+    })
+    expect(tooltipElement?.style.visibility).toBe('visible')
+  })
+
+  it('should ping the tooltip with an array and hide it after the timeout', () => {
     const container = document.createElement('div')
     const tooltip = new Tooltip(container)
     const tooltipElement = container.querySelector('div')

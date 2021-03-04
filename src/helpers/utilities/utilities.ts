@@ -97,4 +97,33 @@ const createNode = (
   return domNode
 }
 
-export { truncateString, randomNumber, newArray, truthy, throttle, createNode }
+/**
+ * Strips spaces and newlines from a string
+ *
+ * @method compress
+ *
+ * @param value the string to be compressed
+ * @return the compressed string
+ */
+const compress = (value: string): string => value.replace(/( |\r\n|\n|\r)/g, '')
+
+/**
+ * Strips non alphanumeric characters from a string
+ *
+ * @method sanitise
+ *
+ * @param value the string to be sanitised
+ * @return the sanitised string
+ */
+const sanitise = (value: string): string => value.replace(/[^0-9a-z ]/gi, '')
+
+export {
+  truncateString,
+  randomNumber,
+  newArray,
+  truthy,
+  throttle,
+  createNode,
+  compress,
+  sanitise,
+}

@@ -63,14 +63,14 @@ const randomData = (
     values: newArray(
       size,
       (val, i): ValueConfig => ({
-        name: `Type ${Number(i)}`,
+        name: `Type ${Number(i) + 1}`,
       })
     ),
   },
   data: newArray(
     length,
     (val, i): TableItem => ({
-      label: `Item ${Number(i)}`,
+      label: `Item ${Number(i) + 1}`,
       values: newArray(size, (): number => randomNumber(rangeLow, rangeHigh)),
     })
   ),
@@ -112,8 +112,10 @@ const transformDataKeys = (
   return data.map(
     (item): TableItem => {
       item.values = config.values.map(({ key }, i): number => {
-        if (typeof key !== 'string') return 0
-        const sanitisedValue = parseInt(item[key])
+        if (typeof key !== 'string' && Array.isArray(item.values)) {
+          return item.values[i]
+        }
+        const sanitisedValue = parseInt(item[key ?? ''])
         return isNaN(sanitisedValue) ? 0 : sanitisedValue
       })
       if (Array.isArray(config.axisKeys) && typeof item.label !== 'string') {
