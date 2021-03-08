@@ -89,8 +89,8 @@ describe('Chart', () => {
     })
     expect(chart.configs.get('default')).toBeDefined()
     expect(chart.dataSets.get('default')).toBeDefined()
-    chart.deleteConfig('default')
-    chart.deleteData('default')
+    chart.deleteMapItem('configs', 'default')
+    chart.deleteMapItem('dataSets', 'default')
     expect(chart.configs.get('default')).toBeUndefined()
     expect(chart.dataSets.get('default')).toBeUndefined()
   })
@@ -100,11 +100,11 @@ describe('Chart', () => {
       container: document.createElement('div'),
       ...randomData(),
     })
-    expect(() => chart.deleteConfig('custom')).toThrow(
-      new Error('Attempted to delete a config that does not exist.')
+    expect(() => chart.deleteMapItem('configs', 'custom')).toThrow(
+      new Error('Failed attempting to delete "custom" from "this.configs".')
     )
-    expect(() => chart.deleteData('custom')).toThrow(
-      new Error('Attempted to delete a data set that does not exist.')
+    expect(() => chart.deleteMapItem('dataSets', 'custom')).toThrow(
+      new Error('Failed attempting to delete "custom" from "this.dataSets".')
     )
   })
 
@@ -135,15 +135,44 @@ describe('Chart', () => {
   })
 
   it('should add a scale', () => {
-    const { data, config, label } = randomData()
     const chart = new Chart({
       container: document.createElement('div'),
-      data,
-      config,
-      label,
+      ...randomData(),
     })
     jasmine.clock().tick(600)
     chart.addScale('default', { x: 'band', y: 'linear' })
     expect(chart.scales.get('default')).toBeDefined()
+  })
+
+  it('should throw an error for invalid scale', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    expect(() =>
+      chart.addScale('default', { x: 'band', y: 'linear' }, 'nothing')
+    ).toThrow(new Error('No valid config provided for scale.'))
+  })
+
+  it('should add an axis', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    chart.addScale('default', { x: 'band', y: 'linear' })
+    chart.addAxis('default', 'default')
+    jasmine.clock().tick(600)
+    chart.addAxis('default', 'default', 'default')
+    expect(chart.axes.get('default')).toBeDefined()
+  })
+
+  it('should throw an error for invalid axis', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    expect(() => chart.addAxis('default', 'default', 'default')).toThrow(
+      new Error('No valid config provided for axis.')
+    )
   })
 })

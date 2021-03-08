@@ -134,7 +134,7 @@ describe('Axis', () => {
   it('should throw an error when the SVG is missing', () => {
     // @ts-expect-error - forcing incorrect usage for test
     expect(() => new Axis({})).toThrow(
-      new Error('Incorrect parameters provided to Axis constructor.')
+      new Error('No SVG provided to Axis constructor.')
     )
   })
 

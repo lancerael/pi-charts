@@ -25,4 +25,6 @@ interface Padding {
   b: number
 }
 
-export { ChartParams, Dimensions, Padding }
+type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'
+
+export { ChartParams, Dimensions, Padding, mapTypes }

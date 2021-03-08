@@ -61,7 +61,7 @@ class Tooltip {
    * @param contents values or string for content
    * @param event the bworser event object for mouse move
    */
-  ping = (contents: string[] | string, event: MouseEvent): void => {
+  public ping = (contents: string[] | string, event: MouseEvent): void => {
     const content =
       typeof contents === 'string'
         ? contents
@@ -82,7 +82,7 @@ class Tooltip {
    * @method throttle
    * @param event the bworser event object for mouse move
    */
-  move = throttle((event: MouseEvent): void => {
+  private readonly move = throttle((event: MouseEvent): void => {
     // const { devicePixelRatio: zoom = 0 } = window ?? {}
     // const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
     const offset = 10
@@ -107,7 +107,7 @@ class Tooltip {
    *
    * @method hide
    */
-  hide = (): void => {
+  public hide = (): void => {
     this.cleanup()
     this.tooltip.style.opacity = '0'
     this.hideTimeout = setTimeout(() => {
@@ -120,7 +120,7 @@ class Tooltip {
    *
    * @method hide
    */
-  cleanup = (): void => {
+  private readonly cleanup = (): void => {
     if (this.showTimeout !== undefined) clearTimeout(this.showTimeout)
     if (this.hideTimeout !== undefined) clearTimeout(this.hideTimeout)
   }
