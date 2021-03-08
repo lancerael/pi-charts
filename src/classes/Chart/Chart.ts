@@ -17,6 +17,7 @@ import {
   D3Div,
   D3Svg,
   ChartScales,
+  mapTypes,
 } from '../../types'
 import { style } from './Chart.style'
 
@@ -173,21 +174,7 @@ class Chart {
     style()
     /* DEV START */
     // this.addScale('default', { x: 'band', y: 'linear' })
-    // const scales = this.scales.get('default')
-    // if (scales !== undefined) {
-    //   this.axes.set(
-    //     'default',
-    //     new Axis({
-    //       d3Svg: this.d3Svg,
-    //       tooltip: this.tooltip,
-    //       dimensions: this.dimensions,
-    //       padding: this.padding,
-    //       truncate: 10,
-    //       axisLabels: this.configs.get('default')?.axisLabels ?? ['', ''],
-    //       scales,
-    //     })
-    //   )
-    // }
+    // this.addAxis('default', 'default', 'default')
     // select(this.container)
     //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
@@ -226,26 +213,9 @@ class Chart {
     if (Array.isArray(config?.values)) {
       config.values = addColorsToConfig(config.values)
       this.configs.set(configName, config)
-      this.renderChart()
+      this.draw()
     } else {
       throw new Error('No valid configuration provided for chart.')
-    }
-  }
-
-  /**
-   * Removes a set of config options for the chart.
-   *
-   * @method deleteConfig
-   *
-   * @param configName key for the hash table
-   * @throws {Error} missing configuration
-   */
-  public deleteConfig = (configName: string): void => {
-    if (truthy(this.configs.get(configName))) {
-      this.configs.delete(configName)
-      this.renderChart()
-    } else {
-      throw new Error('Attempted to delete a config that does not exist.')
     }
   }
 
@@ -268,26 +238,9 @@ class Chart {
         ? transformDataKeys(config, data)
         : data
       this.dataSets.set(dataName, newData)
-      this.renderChart()
+      this.draw()
     } else {
       throw new Error('No valid data provided for chart.')
-    }
-  }
-
-  /**
-   * Removes a dataset from the chart.
-   *
-   * @method deleteData
-   *
-   * @param deleteData key for the hash table
-   * @throws {Error} missing configuration
-   */
-  public deleteData = (dataName: string): void => {
-    if (truthy(this.dataSets.get(dataName))) {
-      this.dataSets.delete(dataName)
-      this.renderChart()
-    } else {
-      throw new Error('Attempted to delete a data set that does not exist.')
     }
   }
 
@@ -301,24 +254,85 @@ class Chart {
    */
   public addScale = (
     scaleName: string,
-    scaleTypes: { x: string; y: string }
+    scaleTypes: { x: string; y: string },
+    dataName: string = 'default'
   ): void => {
-    this.scales.set(
-      scaleName,
-      Object.entries(scaleTypes).reduce(
-        (chartScales, [direction, scaleType]: [string, string]) => ({
-          ...chartScales,
-          [direction]: new Scale({
-            scaleType,
-            dataSet: this.dataSets.get('default'),
-            dimensions: this.dimensions,
-            padding: this.padding,
+    const dataSet = this.dataSets.get(dataName)
+    if (truthy(scaleName) && dataSet !== undefined) {
+      this.scales.set(
+        scaleName,
+        Object.entries(scaleTypes).reduce(
+          (chartScales, [direction, scaleType]: [string, string]) => ({
+            ...chartScales,
+            [direction]: new Scale({
+              scaleType,
+              dataSet: this.dataSets.get(dataName),
+              dimensions: this.dimensions,
+              padding: this.padding,
+            }),
           }),
-        }),
-        {}
-      ) as ChartScales
-    )
-    this.draw()
+          {}
+        ) as ChartScales
+      )
+      this.draw()
+    } else {
+      throw new Error('No valid config provided for scale.')
+    }
+  }
+
+  /**
+   * Adds a set of config options for the chart.
+   *
+   * @method setConfig
+   *
+   * @param addAxis key for the hash table
+   * @param configName the name for the associated JSON configuration object
+   * @param scaleName the name for the associated d3 scale
+   * @throws {Error} missing configuration
+   */
+  public addAxis = (
+    axisName: string,
+    scaleName: string,
+    configName: string = ''
+  ): void => {
+    const scales = this.scales.get(scaleName)
+    if (truthy(axisName) && scales !== undefined) {
+      this.axes.set(
+        axisName,
+        new Axis({
+          d3Svg: this.d3Svg,
+          tooltip: this.tooltip,
+          dimensions: this.dimensions,
+          padding: this.padding,
+          truncate: 10,
+          axisLabels: this.configs.get(configName)?.axisLabels ?? ['', ''],
+          scales,
+        })
+      )
+      this.draw()
+    } else {
+      throw new Error('No valid config provided for axis.')
+    }
+  }
+
+  /**
+   * Removes an item from one of the maps.
+   *
+   * @method deleteMapItem
+   *
+   * @param mapName the name of the map to target
+   * @param mapItemName key for the map item to be deleted
+   * @throws {Error} ite does not exist in map
+   */
+  public deleteMapItem = (mapName: mapTypes, mapItemName: string): void => {
+    if (truthy(this[mapName]?.get(mapItemName))) {
+      this[mapName].delete(mapItemName)
+      this.draw()
+    } else {
+      throw new Error(
+        `Failed attempting to delete "${mapItemName}" from "this.${mapName}".`
+      )
+    }
   }
 
   /**
@@ -363,7 +377,7 @@ class Chart {
     this.scales.forEach((chartScales: ChartScales) =>
       Object.values(chartScales).forEach((scale) => scale.render())
     )
-    // this.axes.forEach((axis: Axis) => axis.render())
+    this.axes.forEach((axis: Axis) => axis.render())
   })
 
   /**

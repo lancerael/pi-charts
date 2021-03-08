@@ -43,6 +43,11 @@ class Scale {
    * @property scaleType
    */
   private readonly dimensions
+
+  /**
+   * The padding at the endes of the chart
+   * @property scaleType
+   */
   private readonly padding
 
   constructor({
@@ -72,7 +77,7 @@ class Scale {
    * @throws {Error} missing dataSet
    * @chainable
    */
-  setData = (dataSet: TableData): Scale => {
+  public setData = (dataSet: TableData): Scale => {
     if (dataSet !== undefined) this.dataSet = dataSet
     else throw new Error('No data to set!')
     return this
@@ -83,7 +88,7 @@ class Scale {
    *
    * @method render
    */
-  render = (): void => {
+  public render = (): void => {
     if (this.dataSet !== undefined) {
       if (this.scaleType === 'band') {
         this.axisScale.domain(this.dataSet.map((d) => d.label))

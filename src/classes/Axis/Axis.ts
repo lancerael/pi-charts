@@ -95,7 +95,7 @@ class Axis {
       this.render()
       style()
     } else {
-      throw new Error('Incorrect parameters provided to Axis constructor.')
+      throw new Error('No SVG provided to Axis constructor.')
     }
   }
 
@@ -104,7 +104,7 @@ class Axis {
    *
    * @method render
    */
-  render(dimensions?: Dimensions): void {
+  public render(dimensions?: Dimensions): void {
     if (dimensions !== undefined) this.dimensions = dimensions
     if (this.dimensions !== undefined) {
       this.renderAxisX()
@@ -118,7 +118,7 @@ class Axis {
    *
    * @method renderAxisX
    */
-  renderAxisX(): void {
+  public renderAxisX(): void {
     this.d3Svg.selectAll('g.pic-axis-x').remove()
     if (this.scales.x !== undefined) {
       this.d3Svg
@@ -152,7 +152,7 @@ class Axis {
    *
    * @method renderAxisY
    */
-  renderAxisY(): void {
+  public renderAxisY(): void {
     this.d3Svg.selectAll('g.pic-axis-y').remove()
     if (this.scales.y !== undefined) {
       this.d3Svg
@@ -171,7 +171,7 @@ class Axis {
    *
    * @method renderLabels
    */
-  renderLabels(): void {
+  public renderLabels(): void {
     this.d3Svg.selectAll('text.pic-label').remove()
     if (truthy(this.axisLabels[0])) {
       this.d3Svg
