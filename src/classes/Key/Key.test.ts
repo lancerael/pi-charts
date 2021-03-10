@@ -45,12 +45,15 @@ describe('totalMargin', () => {
 
 describe('Key', () => {
   it('should create a key', () => {
-    const key = new Key({
-      values,
-      d3Svg,
-      dimensions,
-      padding,
-    })
+    expect(
+      () =>
+        new Key({
+          values,
+          d3Svg,
+          dimensions,
+          padding,
+        })
+    ).not.toThrow()
     expect(
       d3Svg.node()?.querySelectorAll('.pic-key-label').length
     ).toBeGreaterThan(0)
