@@ -5,6 +5,7 @@ interface ValueConfig {
   color?: string
   key?: string
   rgbColor?: RGBColor | false
+  labelWidth?: number
 }
 
 interface TableConfig {
