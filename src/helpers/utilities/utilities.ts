@@ -98,14 +98,25 @@ const createNode = (
 }
 
 /**
- * Strips spaces and newlines from a string
+ * Strips newlines and multi-spaces from a string
  *
  * @method compress
  *
  * @param value the string to be compressed
  * @return the compressed string
  */
-const compress = (value: string): string => value.replace(/( |\r\n|\n|\r)/g, '')
+const flatten = (value: string): string =>
+  value.replace(/( {2}|\r\n|\n|\r)/g, '')
+
+/**
+ * Strips all spaces and newlines from a string
+ *
+ * @method compress
+ *
+ * @param value the string to be compressed
+ * @return the compressed string
+ */
+const compress = (value: string): string => flatten(value.replace(/ /g, ''))
 
 /**
  * Strips non alphanumeric characters from a string
@@ -124,6 +135,7 @@ export {
   truthy,
   throttle,
   createNode,
+  flatten,
   compress,
   sanitise,
 }

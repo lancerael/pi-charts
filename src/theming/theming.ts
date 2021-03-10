@@ -1,5 +1,11 @@
 import { Theme, ThemeList } from '../types'
-import { truthy, createNode, compress, sanitise } from '../helpers/utilities'
+import {
+  truthy,
+  createNode,
+  compress,
+  sanitise,
+  flatten,
+} from '../helpers/utilities'
 import dark from './themes/dark.json'
 import light from './themes/light.json'
 
@@ -26,7 +32,9 @@ const addStyleToDom = (
     styleTag.setAttribute('data-selector', selector)
   }
   if (clean(styleTag.innerHTML).match(clean(css)) === null) {
-    styleTag.innerHTML = `${truthy(replace) ? '' : styleTag.innerHTML} ${css}`
+    styleTag.innerHTML = flatten(
+      `${truthy(replace) ? '' : styleTag.innerHTML} ${css}`
+    )
   }
 }
 

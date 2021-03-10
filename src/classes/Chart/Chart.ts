@@ -19,6 +19,7 @@ import {
   ChartScales,
   mapTypes,
 } from '../../types'
+import { Key } from '../Key'
 import { style } from './Chart.style'
 
 /**
@@ -114,6 +115,13 @@ class Chart {
   readonly axes: Map<string, Axis> = new Map()
 
   /**
+   * The chart's keys
+   *
+   * @property keys
+   */
+  readonly keys: Map<string, Key> = new Map()
+
+  /**
    * The chart's label for display
    *
    * @property label
@@ -175,6 +183,7 @@ class Chart {
     /* DEV START */
     // this.addScale('default', { x: 'band', y: 'linear' })
     // this.addAxis('default', 'default', 'default')
+    // this.addKey('default', 'default')
     // select(this.container)
     //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
@@ -224,7 +233,8 @@ class Chart {
    *
    * @method setData
    * @param dataName name for the data set
-   * @param data transform mapped data
+   * @param data data to set
+   * @param configName name for the config
    * @throws {Error} missing data
    */
   public setData = (
@@ -248,8 +258,9 @@ class Chart {
    * Add a scale set for the chart.
    *
    * @method addScale
-   * @param scaleName array of JSON objects
-   * @param scaleTypes transform mapped data
+   * @param scaleName the name for the scale
+   * @param scaleTypes the types for the scale
+   * @param dataName the name of the dataset
    * @throws {Error} missing data
    */
   public addScale = (
@@ -283,11 +294,11 @@ class Chart {
   /**
    * Adds a set of config options for the chart.
    *
-   * @method setConfig
+   * @method addAxis
    *
-   * @param addAxis key for the hash table
-   * @param configName the name for the associated JSON configuration object
+   * @param axisName key for the hash table
    * @param scaleName the name for the associated d3 scale
+   * @param configName the name for the associated JSON configuration object
    * @throws {Error} missing configuration
    */
   public addAxis = (
@@ -316,6 +327,33 @@ class Chart {
   }
 
   /**
+   * Adds a set of keys to the chart.
+   *
+   * @method setConfig
+   *
+   * @param keyName name for the hash table
+   * @param configName the name for the associated JSON configuration object
+   * @throws {Error} missing configuration
+   */
+  public addKey = (keyName: string, configName: string = ''): void => {
+    const config = this.configs.get(configName)
+    if (truthy(keyName) && config !== undefined) {
+      this.keys.set(
+        keyName,
+        new Key({
+          d3Svg: this.d3Svg,
+          values: config?.values ?? [],
+          dimensions: this.dimensions,
+          padding: this.padding,
+        })
+      )
+      this.draw()
+    } else {
+      throw new Error('No valid config provided for key.')
+    }
+  }
+
+  /**
    * Removes an item from one of the maps.
    *
    * @method deleteMapItem
@@ -325,7 +363,9 @@ class Chart {
    * @throws {Error} ite does not exist in map
    */
   public deleteMapItem = (mapName: mapTypes, mapItemName: string): void => {
-    if (truthy(this[mapName]?.get(mapItemName))) {
+    const mapItem = this[mapName]?.get(mapItemName)
+    if (mapItem !== undefined) {
+      // if (mapItem.remove) ()
       this[mapName].delete(mapItemName)
       this.draw()
     } else {
@@ -378,6 +418,7 @@ class Chart {
       Object.values(chartScales).forEach((scale) => scale.render())
     )
     this.axes.forEach((axis: Axis) => axis.render())
+    this.keys.forEach((key: Key) => key.render())
   })
 
   /**

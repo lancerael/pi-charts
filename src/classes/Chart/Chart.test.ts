@@ -175,4 +175,36 @@ describe('Chart', () => {
       new Error('No valid config provided for axis.')
     )
   })
+
+  it('should add a key', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    jasmine.clock().tick(600)
+    chart.addKey('default', 'default')
+    expect(chart.keys.get('default')).toBeDefined()
+  })
+
+  it('should handle adding a key with missing config values', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    const config = chart.configs.get('default')
+    // @ts-expect-error - forcing incorrect usage for test
+    config.values = undefined
+    chart.addKey('default', 'default')
+    expect(chart.keys.get('default')).toBeDefined()
+  })
+
+  it('should throw an error for invalid key', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    expect(() => chart.addKey('default')).toThrow(
+      new Error('No valid config provided for key.')
+    )
+  })
 })
