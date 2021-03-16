@@ -11,9 +11,8 @@ const dimensions = {
   innerWidth: 0,
   innerHeight: 0,
   resizeOffset: 0,
+  padding: { l: 45, r: 5, t: 25, b: 85 },
 }
-
-const padding = { l: 45, r: 5, t: 25, b: 85 }
 
 describe('Scale', () => {
   it('should create a band Scale initialised with a dataset', () => {
@@ -21,7 +20,6 @@ describe('Scale', () => {
       scaleType: 'band',
       dataSet,
       dimensions,
-      padding,
     })
     expect(bandScale.axisScale).toBeDefined()
   })
@@ -29,7 +27,6 @@ describe('Scale', () => {
   it('should create a default band Scale with a dataset added later via render', () => {
     const bandScale = new Scale({
       dimensions,
-      padding,
     })
     expect(bandScale.axisScale.domain().length).toBe(0)
     bandScale.setData(dataSet).render()
@@ -41,7 +38,6 @@ describe('Scale', () => {
       scaleType: 'linear',
       dataSet,
       dimensions,
-      padding,
     })
     expect(linearScale.axisScale).toBeDefined()
   })
@@ -50,7 +46,6 @@ describe('Scale', () => {
     const bananaScale = new Scale({
       scaleType: 'banana',
       dimensions,
-      padding,
     })
     expect(() => bananaScale.render()).toThrow(
       new Error('No data to render scale!')

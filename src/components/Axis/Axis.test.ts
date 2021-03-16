@@ -24,23 +24,21 @@ const dimensions = {
   innerWidth: 0,
   innerHeight: 0,
   resizeOffset: 0,
+  padding: { l: 45, r: 5, t: 25, b: 85 },
 }
 
 const d3Svg = select(document.body).append('svg')
-const padding = { l: 45, r: 5, t: 25, b: 85 }
 const tooltip = new Tooltip(document.body)
 const scales = {
   x: new Scale({
     scaleType: 'band',
     dataSet: randomData().data,
     dimensions,
-    padding,
   }),
   y: new Scale({
     scaleType: 'linear',
     dataSet: randomData().data,
     dimensions,
-    padding,
   }),
 }
 const axisLabels = ['a', 'b'] as [string, string]
@@ -51,7 +49,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -67,7 +64,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales: { x: scales.x },
@@ -83,7 +79,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales: { y: scales.y },
@@ -99,7 +94,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -114,7 +108,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     // @ts-expect-error - forcing incorrect usage for test
     axis = new Axis({
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -143,7 +136,6 @@ describe('Axis', () => {
     spyOn(tooltip, 'hide')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -167,7 +159,6 @@ describe('Axis', () => {
     spyOn(tooltip, 'ping')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,

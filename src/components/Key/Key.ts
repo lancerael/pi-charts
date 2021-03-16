@@ -1,11 +1,5 @@
 import { truthy } from '../../helpers'
-import {
-  ValueConfig,
-  KeyParams,
-  D3Svg,
-  Dimensions,
-  Padding,
-} from '../../types/'
+import { ValueConfig, KeyParams, D3Svg, Dimensions } from '../../types/'
 
 const totalMargin = (values: ValueConfig[], i = 0): number =>
   values
@@ -41,27 +35,18 @@ class Key {
   dimensions: Dimensions
 
   /**
-   * The y offset for the key
-   *
-   * @property offsetY
-   */
-  padding: Padding
-
-  /**
    * Constructor function that sets up the local object.
    *
    * @method constructor
    * @param {Object} d3Svg A d3 wrapped container element
    * @param {Array} values the config for the data to be displayed
    * @param {Integer} dimensions the chart dimensions
-   * @param {Integer} padding the chart padding
    */
-  constructor({ d3Svg, values, dimensions, padding }: KeyParams) {
-    if ([d3Svg, values, dimensions, padding].every(truthy)) {
+  constructor({ d3Svg, values, dimensions }: KeyParams) {
+    if ([d3Svg, values, dimensions].every(truthy)) {
       this.d3Svg = d3Svg
       this.values = [...values]
       this.dimensions = dimensions
-      this.padding = padding
       this.render()
     } else {
       throw new Error('Incorrect parameters provided to Key constructor.')
@@ -75,9 +60,10 @@ class Key {
    * @chainable
    */
   render(): void {
+    const { innerWidth, height, padding } = this.dimensions
     let iGroupOffset = 0
-    const offsetX = this.dimensions.innerWidth / 2 + this.padding.l
-    const offsetY = this.dimensions.height - 20
+    const offsetX = innerWidth / 2 + padding.l
+    const offsetY = height - 20
 
     /* Key group */
     this.d3Svg.selectAll('g.pic-key-group').remove()

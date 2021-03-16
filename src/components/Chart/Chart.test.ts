@@ -66,8 +66,8 @@ describe('Chart', () => {
       container: document.createElement('div'),
       label,
     })
-    chart.setConfig('myConfig', config)
-    chart.setData('myData', data, 'myConfig')
+    chart.setConfig(config, 'myConfig')
+    chart.setData(data, 'myData', 'myConfig')
     expect(chart.configs.get('myConfig')).toEqual(config)
     expect(chart.dataSets.get('myData')).toEqual(data)
   })
@@ -78,7 +78,7 @@ describe('Chart', () => {
       container: document.createElement('div'),
       label,
     })
-    chart.setData('myData', data, 'myConfig')
+    chart.setData(data, 'myData', 'myConfig')
     expect(chart.dataSets.get('myData')).toEqual(data)
   })
 
@@ -116,7 +116,7 @@ describe('Chart', () => {
     })
     // @ts-expect-error - forcing incorrect usage for test
     delete config.values
-    expect(() => chart.setConfig('myConfig', config)).toThrow(
+    expect(() => chart.setConfig(config, 'myConfig')).toThrow(
       new Error('No valid configuration provided for chart.')
     )
   })
@@ -127,9 +127,9 @@ describe('Chart', () => {
       container: document.createElement('div'),
       label,
     })
-    chart.setConfig('myConfig', config)
+    chart.setConfig(config, 'myConfig')
     // @ts-expect-error - forcing incorrect usage for test
-    expect(() => chart.setData('myData', 'data', 'myConfig')).toThrow(
+    expect(() => chart.setData('data', 'myData', 'myConfig')).toThrow(
       new Error('No valid data provided for chart.')
     )
   })
@@ -140,7 +140,7 @@ describe('Chart', () => {
       ...randomData(),
     })
     jasmine.clock().tick(600)
-    chart.addScale('default', { x: 'band', y: 'linear' })
+    chart.addScale({ x: 'band', y: 'linear' }, 'default')
     expect(chart.scales.get('default')).toBeDefined()
   })
 
@@ -150,7 +150,7 @@ describe('Chart', () => {
       ...randomData(),
     })
     expect(() =>
-      chart.addScale('default', { x: 'band', y: 'linear' }, 'nothing')
+      chart.addScale({ x: 'band', y: 'linear' }, 'default', 'nothing')
     ).toThrow(new Error('No valid config provided for scale.'))
   })
 
@@ -159,7 +159,7 @@ describe('Chart', () => {
       container: document.createElement('div'),
       ...randomData(),
     })
-    chart.addScale('default', { x: 'band', y: 'linear' })
+    chart.addScale({ x: 'band', y: 'linear' }, 'default')
     chart.addAxis('default', 'default')
     jasmine.clock().tick(600)
     chart.addAxis('default', 'default', 'default')

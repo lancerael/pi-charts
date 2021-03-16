@@ -30,7 +30,7 @@
       <button onclick="window.location.reload()">New data</button>
     </div>
     <div class="container c1"></div>
-    <div class="container c2"></div>
+    <!-- <div class="container c2"></div> -->
     <script>
       window.onload = function () {
         // console.log('------UTILITIES------')
@@ -51,7 +51,7 @@
         // console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
         // colorFilter,
         const chart = new pic.Chart({ container: '.container.c1', ...pic.randomData() })
-        const chart2 = new pic.Chart({ container: '.container.c2', ...pic.randomData()  })
+        // const chart2 = new pic.Chart({ container: '.container.c2', ...pic.randomData()  })
         // console.log(pic.newArray(5, () => pic.randomNumber(5, 55)))
       }
     </script>

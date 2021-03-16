@@ -1,10 +1,9 @@
-import { ValueConfig, D3Svg, Dimensions, Padding } from './'
+import { ValueConfig, D3Svg, Dimensions } from './'
 
 interface KeyParams {
   d3Svg: D3Svg
   values: ValueConfig[]
   dimensions: Dimensions
-  padding: Padding
 }
 
 export { KeyParams }
