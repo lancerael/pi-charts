@@ -1,12 +1,8 @@
-import { Tooltip } from '../components'
-import { Bars } from '../components/Bars'
-import { TableConfig, TableData } from './'
-import { D3Svg } from './general.types'
-import { ChartScales } from './Scale.types'
+import { TableConfig, TableItem } from './'
 
 interface ChartParams {
   config?: TableConfig
-  data?: TableData
+  data?: TableItem[]
   theme?: string
   container: HTMLDivElement | string
   label: string
@@ -30,17 +26,6 @@ interface Dimensions {
   resizeOffset: number
 }
 
-type Visual = Bars
-
-interface VisualParams {
-  d3Svg: D3Svg
-  config: TableConfig
-  data: TableData
-  scales: ChartScales
-  tooltip: Tooltip
-  dimensions: Dimensions
-}
-
 type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'
 
-export { ChartParams, Dimensions, Padding, mapTypes, VisualParams, Visual }
+export { ChartParams, Dimensions, Padding, mapTypes }

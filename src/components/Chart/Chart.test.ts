@@ -57,7 +57,7 @@ describe('Chart', () => {
       label,
     })
     expect(chart.configs.get('default')).toEqual(config)
-    expect(chart.dataSets.get('default')).toEqual(data)
+    expect(chart.dataSets.get('default')?.data).toEqual(data)
   })
 
   it('should initialise then allow later addition config and data', () => {
@@ -69,7 +69,7 @@ describe('Chart', () => {
     chart.setConfig(config, 'myConfig')
     chart.setData(data, 'myData', 'myConfig')
     expect(chart.configs.get('myConfig')).toEqual(config)
-    expect(chart.dataSets.get('myData')).toEqual(data)
+    expect(chart.dataSets.get('myData')?.data).toEqual(data)
   })
 
   it('should initialise then allow later addition of data', () => {
@@ -79,7 +79,7 @@ describe('Chart', () => {
       label,
     })
     chart.setData(data, 'myData', 'myConfig')
-    expect(chart.dataSets.get('myData')).toEqual(data)
+    expect(chart.dataSets.get('myData')?.data).toEqual(data)
   })
 
   it('should allow removal of config and data', () => {

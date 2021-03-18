@@ -18,7 +18,7 @@ describe('Scale', () => {
   it('should create a band Scale initialised with a dataset', () => {
     const bandScale = new Scale({
       scaleType: 'band',
-      dataSet,
+      dataSet: { data: dataSet, minValue: 0, maxValue: 100 },
       dimensions,
     })
     expect(bandScale.axisScale).toBeDefined()
@@ -29,14 +29,14 @@ describe('Scale', () => {
       dimensions,
     })
     expect(bandScale.axisScale.domain().length).toBe(0)
-    bandScale.setData(dataSet).render()
+    bandScale.setData({ data: dataSet, minValue: 0, maxValue: 100 }).render()
     expect(bandScale.axisScale.domain().length).toBeGreaterThan(0)
   })
 
   it('should create a linear Scale initialised with a dataset', () => {
     const linearScale = new Scale({
       scaleType: 'linear',
-      dataSet,
+      dataSet: { data: dataSet, minValue: 0, maxValue: 100 },
       dimensions,
     })
     expect(linearScale.axisScale).toBeDefined()
@@ -52,7 +52,7 @@ describe('Scale', () => {
     )
     // @ts-expect-error - forcing incorrect usage for test
     expect(() => bananaScale.setData()).toThrow(new Error('No data to set!'))
-    bananaScale.setData(dataSet)
+    bananaScale.setData({ data: dataSet, minValue: 0, maxValue: 100 })
     expect(() => bananaScale.render()).toThrow(new Error('Unknown chart type!'))
   })
 })

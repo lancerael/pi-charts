@@ -1,8 +1,13 @@
 import { axisBottom, axisLeft } from 'd3-axis'
-import { Dimensions, D3Svg, ChartScales } from '../../types'
+import {
+  Dimensions,
+  D3Svg,
+  ChartScales,
+  AxisParams,
+  D3Group,
+} from '../../types'
 import { truncateString, truthy } from '../../helpers'
 import { Tooltip } from '../Tooltip'
-import { AxisParams } from '../../types/Axis.types'
 import { style } from './Axis.style'
 
 /**
@@ -55,6 +60,10 @@ class Axis {
    */
   private dimensions: Dimensions
 
+  private axisGroupX: D3Group
+
+  private axisGroupY: D3Group
+
   /**
    * Constructor function which sets up the local object.
    *
@@ -82,6 +91,8 @@ class Axis {
       this.truncate = truncate
       this.axisLabels = axisLabels ?? ['', '']
       this.scales = scales
+      this.axisGroupX = d3Svg.append('g').attr('class', 'pic-axis pic-axis-x')
+      this.axisGroupY = d3Svg.append('g').attr('class', 'pic-axis pic-axis-y')
       this.render()
       style()
     } else {
@@ -110,11 +121,8 @@ class Axis {
    */
   public renderAxisX(): void {
     const { height, padding } = this.dimensions
-    this.d3Svg.selectAll('g.pic-axis-x').remove()
     if (this.scales.x !== undefined) {
-      this.d3Svg
-        .append('g')
-        .attr('class', 'pic-axis pic-axis-x')
+      this.axisGroupX
         .call(axisBottom(this.scales.x.axisScale))
         .attr('transform', `translate(${padding.l},${height - padding.b})`)
         .selectAll('text')
@@ -125,11 +133,11 @@ class Axis {
         .text((d) => truncateString(d as string, this.truncate))
         .style('text-anchor', 'end')
         .on('mousemove', (e, d) => {
-          if (truthy(this.tooltip) && (d as string).length > this.truncate) {
+          if ((d as string).length > this.truncate) {
             this.tooltip.ping(`<strong>${d as string}</strong>`, e)
           }
         })
-        .on('mouseout', (e, d) => this.tooltip.hide())
+        .on('mouseout', this.tooltip.hide)
     }
   }
 
@@ -140,11 +148,8 @@ class Axis {
    */
   public renderAxisY(): void {
     const { innerWidth, padding } = this.dimensions
-    this.d3Svg.selectAll('g.pic-axis-y').remove()
     if (this.scales.y !== undefined) {
-      this.d3Svg
-        .append('g')
-        .attr('class', 'pic-axis pic-axis-y')
+      this.axisGroupY
         .call(axisLeft(this.scales.y.axisScale))
         .attr('transform', `translate(${padding.l},0)`)
         .selectAll('.pic-axis-y .tick line')

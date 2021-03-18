@@ -8,10 +8,14 @@ import {
   TableConfig,
   TableData,
   TableItem,
+  Timeout,
   VisualParams,
+  VisualRenderParams,
 } from '../../types'
 import { Tooltip } from '../'
 import { darkerColor } from '../../helpers'
+
+const TRANSITION_TIME = 1000
 
 /**
  * Create BarCharts from the supplied data, based on the JSON config.
@@ -32,7 +36,7 @@ class Bars {
 
   config: TableConfig
 
-  data: TableData
+  dataSet: TableData
 
   scales: ChartScales
 
@@ -40,7 +44,7 @@ class Bars {
 
   dimensions: Dimensions
 
-  clickCallback = (e: MouseEvent, d: TableItem): void => console.log('clicked')
+  clickCallback?: (e: MouseEvent, d: TableItem) => void
 
   /**
    * Constructor used to set chart type
@@ -50,36 +54,40 @@ class Bars {
   constructor({
     d3Svg,
     config,
-    data,
+    dataSet,
     scales,
     tooltip,
     dimensions,
   }: VisualParams) {
     this.config = config
-    this.data = data
+    this.dataSet = dataSet
     this.scales = scales
     this.tooltip = tooltip
     this.dimensions = dimensions
     this.chartGroup = d3Svg
       .append('g')
       .attr('transform', `translate(${dimensions.padding.l}, 0)`)
-    this.render()
+    this.render({ transition: true })
   }
 
   /**
    * Render the bars
    *
-   * @method renderChart
+   * @method render
    */
-  render(reset = false): void {
+  render = ({
+    reset = false,
+    transition = false,
+  }: VisualRenderParams = {}): void => {
     if (this.scales.x === undefined || this.scales.y === undefined) return
+    const { data, minValue, maxValue } = this.dataSet
     const { values } = this.config
     const { innerHeight, padding } = this.dimensions
     const scaleX = this.scales.x.axisScale as ScaleBand<string>
     const scaleY = this.scales.y.axisScale as ScaleLinear<number, number>
     const barWidth = scaleX.bandwidth() / values.length
     const barType = 'side'
-    const transitionTime = 1000
+    const transitionTime = transition ? TRANSITION_TIME : 0
 
     // Reset bars data and clear graph
     if (reset) {
@@ -99,7 +107,7 @@ class Bars {
         // Bind bars data
         this.bars[i] = this.chartGroup
           .selectAll(`rect.pic-bars-${i}`)
-          .data(this.data)
+          .data(data)
         // Add new rect elements and set base attributes
         this.bars[i]
           .enter()
@@ -107,9 +115,9 @@ class Bars {
           .on('mousemove', (e: MouseEvent, d: TableItem) => {
             this.tooltip.ping([d.label, name, String(d.values[i])], e)
           })
-          .on('mouseover', (e: MouseEvent, d: TableItem) => {
+          .on('mouseover', ({ target }: MouseEvent) => {
             if (typeof rgbColor === 'object') {
-              select(e.target as BaseType).attr(
+              select(target as Element).attr(
                 'fill',
                 darkerColor(rgbColor).formatHex()
               )
@@ -120,10 +128,10 @@ class Bars {
               this.clickCallback(e, d)
             }
           })
-          .on('mouseout', (e: MouseEvent, d: TableItem) => {
+          .on('mouseout', ({ target }: MouseEvent) => {
             this.tooltip.hide()
             if (typeof rgbColor === 'object') {
-              select(e.target as BaseType).attr('fill', rgbColor.formatHex())
+              select(target as Element).attr('fill', rgbColor.formatHex())
             }
           })
           .attr('class', `pic-bars pic-bars-${i}`)
@@ -134,7 +142,7 @@ class Bars {
 
       this.chartGroup
         .selectAll(`rect.pic-bars-${i}`)
-        .data(this.data)
+        .data(data)
         .attr('x', (d: TableItem) => Number(scaleX(d.label)) + barOffset)
         .attr('width', barWidth)
         .transition()
@@ -146,10 +154,9 @@ class Bars {
           return scaleY(d.values[i] + value)
         })
         .attr('height', (d: TableItem) => {
-          const iModifier = 0 // this.iMinValue < 0 ? Math.abs(this.iMinValue) : 0
-          return (
-            innerHeight - scaleY(Math.abs(d.values[i]) - iModifier) + padding.t
-          )
+          const modifier = minValue < 0 ? Math.abs(maxValue) : 0
+          const scaleValue = Math.abs(d.values[i]) - modifier
+          return innerHeight - scaleY(scaleValue) + padding.t
         })
     })
   }

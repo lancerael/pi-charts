@@ -32,12 +32,12 @@ const tooltip = new Tooltip(document.body)
 const scales = {
   x: new Scale({
     scaleType: 'band',
-    dataSet: randomData().data,
+    dataSet: { data: randomData().data, minValue: 0, maxValue: 100 },
     dimensions,
   }),
   y: new Scale({
     scaleType: 'linear',
-    dataSet: randomData().data,
+    dataSet: { data: randomData().data, minValue: 0, maxValue: 100 },
     dimensions,
   }),
 }

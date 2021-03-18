@@ -1,5 +1,4 @@
 import { scaleLinear, scaleBand } from 'd3-scale'
-import { min, max } from 'd3-array'
 import { AxisScale, Dimensions, TableData } from '../../types'
 
 /**
@@ -44,10 +43,6 @@ class Scale {
    */
   private readonly dimensions
 
-  public minValue = 0
-
-  public maxValue = 0
-
   constructor({
     scaleType = 'band',
     dataSet,
@@ -87,12 +82,10 @@ class Scale {
     const { padding, height, innerWidth } = this.dimensions
     if (this.dataSet !== undefined) {
       if (this.scaleType === 'band') {
-        this.axisScale.domain(this.dataSet.map((d) => d.label))
+        this.axisScale.domain(this.dataSet.data.map((d) => d.label))
         this.axisScale.range([0, innerWidth])
       } else if (this.scaleType === 'linear') {
-        const minVal = min(this.dataSet, (d) => min(d.values))
-        const maxVal = max(this.dataSet, (d) => max(d.values))
-        this.axisScale.domain([minVal, maxVal])
+        this.axisScale.domain([this.dataSet.minValue, this.dataSet.maxValue])
         this.axisScale.range([height - padding.b, padding.t])
       } else throw new Error('Unknown chart type!')
     } else throw new Error('No data to render scale!')

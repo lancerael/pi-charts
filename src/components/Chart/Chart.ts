@@ -20,6 +20,7 @@ import {
   ChartScales,
   mapTypes,
   Visual,
+  TableItem,
 } from '../../types'
 import { Bars } from '../Bars'
 import { Key } from '../Key'
@@ -195,7 +196,7 @@ class Chart {
     this.addScale()
     this.addAxis()
     this.addKey()
-    this.addVisual()
+    setTimeout(this.addVisual)
     // select(this.container)
     //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
@@ -250,27 +251,26 @@ class Chart {
    * @throws {Error} missing data
    */
   public setData = (
-    data: TableData,
+    data: TableItem[],
     dataName = 'default',
-    configName = 'default'
+    configName = 'default',
+    trim = true
   ): void => {
     const config = this.configs.get(configName)
     if (Array.isArray(data) && config !== undefined) {
       const newData = Array.isArray(config?.values)
         ? transformDataKeys(config, data)
         : data
-
-      // const trim = false
-      // let minValue = (trim ? min(newData, (d) => min(d.values)) : 0) ?? 0
-      // let maxValue = max(newData, (d) => max(d.values)) ?? 0
-      // const section = Math.ceil(maxValue / 15)
-      // if (trim) {
-      //   const lowerSection = minValue > section ? minValue - section : 0
-      //   minValue = minValue > 0 ? lowerSection : minValue
-      //   minValue = minValue < 0 ? minValue - section : minValue
-      //   maxValue += section
-      // }
-      this.dataSets.set(dataName, newData) //{ data: newData, minValue, maxValue })
+      let minValue = (trim ? min(newData, (d) => min(d.values)) : 0) ?? 0
+      let maxValue = max(newData, (d) => max(d.values)) ?? 0
+      const section = Math.ceil(maxValue / 15)
+      if (trim) {
+        const lowerSection = minValue > section ? minValue - section : 0
+        minValue = minValue > 0 ? lowerSection : minValue
+        minValue = minValue < 0 ? minValue - section : minValue
+        maxValue += section
+      }
+      this.dataSets.set(dataName, { data: newData, minValue, maxValue })
       this.draw()
     } else {
       throw new Error('No valid data provided for chart.')
@@ -390,13 +390,13 @@ class Chart {
     type = 'bar'
   ): void => {
     const config = this.configs.get(configName)
-    const data = this.dataSets.get(dataName)
+    const dataSet = this.dataSets.get(dataName)
     const scales = this.scales.get(scalesName)
-    if (config !== undefined && data !== undefined && scales !== undefined) {
+    if (config !== undefined && dataSet !== undefined && scales !== undefined) {
       const params = {
         d3Svg: this.d3Svg,
         config,
-        data,
+        dataSet,
         scales,
         tooltip: this.tooltip,
         dimensions: this.dimensions,
@@ -478,7 +478,7 @@ class Chart {
     )
     this.axes.forEach((axis: Axis) => axis.render())
     this.keys.forEach((key: Key) => key.render())
-    // this.keys.forEach((key: Key) => key.render())
+    this.visuals.forEach((visual: Visual) => visual.render({ reset: true }))
   }
 
   /**

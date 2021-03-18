@@ -21,16 +21,18 @@ interface TableItem {
   color?: string
 }
 
+// type TableData = TableItem[]
+
 interface TableData {
   data: TableItem[]
-  // minValue: number
-  // maxValue: number
+  minValue: number
+  maxValue: number
 }
 
 interface ChartTable {
   label: string
   config: TableConfig
-  data: TableData
+  data: TableItem[]
 }
 
 export { ValueConfig, TableConfig, TableItem, TableData, ChartTable }
