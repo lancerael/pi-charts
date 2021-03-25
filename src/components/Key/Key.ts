@@ -1,7 +1,7 @@
 import { truthy } from '../../helpers'
 import { ValueConfig, KeyParams, D3Svg, Dimensions } from '../../types/'
 
-const totalMargin = (values: ValueConfig[], i = 0): number =>
+export const totalMargin = (values: ValueConfig[], i = 0): number =>
   values
     .slice(0, i)
     .reduce((total, { labelWidth: width = 0 }) => total + width, 0)
@@ -12,7 +12,7 @@ const totalMargin = (values: ValueConfig[], i = 0): number =>
  * @class Key
  * @constructor
  */
-class Key {
+export class Key {
   /**
    * d3 object for axis container
    *
@@ -108,5 +108,3 @@ class Key {
     d3KeyGroup.attr('transform', `translate(${iGroupOffset},${offsetY})`)
   }
 }
-
-export { totalMargin, Key }

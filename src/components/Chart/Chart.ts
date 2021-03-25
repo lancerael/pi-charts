@@ -1,7 +1,7 @@
 import { max, min } from 'd3-array'
 import { select } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
-import { Tooltip, Axis, Scale } from '../'
+import { Tooltip, Axis, Scale, Bars, Key } from '../'
 import {
   addColorsToConfig,
   throttle,
@@ -22,8 +22,6 @@ import {
   Visual,
   TableItem,
 } from '../../types'
-import { Bars } from '../Bars'
-import { Key } from '../Key'
 import { style } from './Chart.style'
 
 /**
@@ -32,7 +30,7 @@ import { style } from './Chart.style'
  * @class Chart
  * @constructor
  */
-class Chart {
+export class Chart {
   /**
    * Default time for d3 transitions on the chart
    *
@@ -193,10 +191,6 @@ class Chart {
     publishTheme(theme)
     style()
     /* DEV START */
-    this.addScale()
-    this.addAxis()
-    this.addKey()
-    setTimeout(this.addVisual)
     // select(this.container)
     //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
@@ -226,16 +220,18 @@ class Chart {
    * Adds a set of config options for the chart.
    *
    * @method setConfig
+   * @chainable
    *
    * @param config JSON configuration object
    * @param configName key for the hash table
    * @throws {Error} missing configuration
    */
-  public setConfig = (config: TableConfig, configName = 'default'): void => {
-    if (truthy(configName) && Array.isArray(config?.values)) {
+  public setConfig = (config: TableConfig, configName = 'default'): Chart => {
+    if (Array.isArray(config?.values)) {
       config.values = addColorsToConfig(config.values)
       this.configs.set(configName, config)
       this.draw()
+      return this
     } else {
       throw new Error('No valid configuration provided for chart.')
     }
@@ -245,6 +241,8 @@ class Chart {
    * Add a data set for the chart.
    *
    * @method setData
+   * @chainable
+   *
    * @param dataName name for the data set
    * @param data data to set
    * @param configName name for the config
@@ -255,14 +253,14 @@ class Chart {
     dataName = 'default',
     configName = 'default',
     trim = true
-  ): void => {
+  ): Chart => {
     const config = this.configs.get(configName)
-    if (Array.isArray(data) && config !== undefined) {
+    if (Array.isArray(data)) {
       const newData = Array.isArray(config?.values)
         ? transformDataKeys(config, data)
         : data
-      let minValue = (trim ? min(newData, (d) => min(d.values)) : 0) ?? 0
-      let maxValue = max(newData, (d) => max(d.values)) ?? 0
+      let minValue = trim ? Number(min(newData, (d) => min(d.values))) : 0
+      let maxValue = Number(max(newData, (d) => max(d.values)))
       const section = Math.ceil(maxValue / 15)
       if (trim) {
         const lowerSection = minValue > section ? minValue - section : 0
@@ -272,6 +270,7 @@ class Chart {
       }
       this.dataSets.set(dataName, { data: newData, minValue, maxValue })
       this.draw()
+      return this
     } else {
       throw new Error('No valid data provided for chart.')
     }
@@ -281,6 +280,8 @@ class Chart {
    * Add a scale set for the chart.
    *
    * @method addScale
+   * @chainable
+   *
    * @param scaleName the name for the scale
    * @param scaleTypes the types for the scale
    * @param dataName the name of the dataset
@@ -290,7 +291,7 @@ class Chart {
     scaleTypes: { x: string; y: string } = { x: 'band', y: 'linear' },
     scaleName = 'default',
     dataName = 'default'
-  ): void => {
+  ): Chart => {
     const dataSet = this.dataSets.get(dataName)
     if (dataSet !== undefined) {
       this.scales.set(
@@ -308,6 +309,7 @@ class Chart {
         ) as ChartScales
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for scale.')
     }
@@ -317,6 +319,7 @@ class Chart {
    * Adds a set of config options for the chart.
    *
    * @method addAxis
+   * @chainable
    *
    * @param axisName key for the hash table
    * @param scaleName the name for the associated d3 scale
@@ -327,7 +330,7 @@ class Chart {
     axisName = 'default',
     scaleName = 'default',
     configName = 'default'
-  ): void => {
+  ): Chart => {
     const scales = this.scales.get(scaleName)
     if (scales !== undefined) {
       this.axes.set(
@@ -342,6 +345,7 @@ class Chart {
         })
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for axis.')
     }
@@ -351,12 +355,13 @@ class Chart {
    * Adds a set of keys to the chart.
    *
    * @method addKey
+   * @chainable
    *
    * @param keyName name for the hash table
    * @param configName the name for the associated JSON configuration object
    * @throws {Error} missing configuration
    */
-  public addKey = (keyName = 'default', configName = 'default'): void => {
+  public addKey = (keyName = 'default', configName = 'default'): Chart => {
     const config = this.configs.get(configName)
     if (config !== undefined) {
       this.keys.set(
@@ -368,6 +373,7 @@ class Chart {
         })
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for key.')
     }
@@ -377,6 +383,7 @@ class Chart {
    * Adds a set of keys to the chart.
    *
    * @method addVisual
+   * @chainable
    *
    * @param keyName name for the hash table
    * @param configName the name for the associated JSON configuration object
@@ -387,8 +394,9 @@ class Chart {
     configName = 'default',
     dataName = 'default',
     scalesName = 'default',
-    type = 'bar'
-  ): void => {
+    type = 'bar',
+    transitionTime = 1000
+  ): Chart => {
     const config = this.configs.get(configName)
     const dataSet = this.dataSets.get(dataName)
     const scales = this.scales.get(scalesName)
@@ -398,14 +406,17 @@ class Chart {
         config,
         dataSet,
         scales,
+        transitionTime,
         tooltip: this.tooltip,
         dimensions: this.dimensions,
       }
       switch (type) {
         default: {
-          this.visuals.set(keyName, new Bars(params))
+          setTimeout(() => this.visuals.set(keyName, new Bars(params)))
         }
       }
+      setTimeout(this.draw, transitionTime)
+      return this
     } else {
       throw new Error('No valid config provided for visual.')
     }
@@ -415,17 +426,19 @@ class Chart {
    * Removes an item from one of the maps.
    *
    * @method deleteMapItem
+   * @chainable
    *
    * @param mapName the name of the map to target
    * @param mapItemName key for the map item to be deleted
    * @throws {Error} ite does not exist in map
    */
-  public deleteMapItem = (mapName: mapTypes, mapItemName: string): void => {
+  public deleteMapItem = (mapName: mapTypes, mapItemName: string): Chart => {
     const mapItem = this[mapName]?.get(mapItemName)
     if (mapItem !== undefined) {
       // if (mapItem.remove) ()
       this[mapName].delete(mapItemName)
       this.draw()
+      return this
     } else {
       throw new Error(
         `Failed attempting to delete "${mapItemName}" from "this.${mapName}".`
@@ -494,5 +507,3 @@ class Chart {
    */
   private readonly resizeWatcher = new ResizeObserver(this.redraw)
 }
-
-export { Chart }

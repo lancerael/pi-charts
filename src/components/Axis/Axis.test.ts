@@ -54,8 +54,12 @@ describe('Axis', () => {
       scales,
       axisLabels,
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -69,8 +73,10 @@ describe('Axis', () => {
       scales: { x: scales.x },
       axisLabels: ['a', ''],
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y line').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
   })
@@ -84,8 +90,10 @@ describe('Axis', () => {
       scales: { y: scales.y },
       axisLabels: ['', 'b'],
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x text').length).toBe(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -113,13 +121,17 @@ describe('Axis', () => {
       scales,
       axisLabels,
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x text').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y line').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
     axis.render(dimensions)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -132,6 +144,7 @@ describe('Axis', () => {
   })
 
   it('should handle tooltip events on mouse labels', () => {
+    const d3Svg = select(document.body).append('svg')
     spyOn(tooltip, 'ping')
     spyOn(tooltip, 'hide')
     axis = new Axis({

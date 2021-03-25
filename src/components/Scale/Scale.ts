@@ -17,7 +17,7 @@ const scaleMap: { [key: string]: () => AxisScale } = {
  * @class Scale
  * @constructor
  */
-class Scale {
+export class Scale {
   /**
    * The type of scale, and key to the scale map
    *
@@ -91,5 +91,3 @@ class Scale {
     } else throw new Error('No data to render scale!')
   }
 }
-
-export { Scale }

@@ -1,6 +1,6 @@
 import { Tooltip } from '../components'
 import { Bars } from '../components/Bars'
-import { Dimensions, TableConfig, TableData } from './'
+import { Dimensions, TableConfig, TableData, TableItem } from './'
 import { D3Svg } from './general.types'
 import { ChartScales } from './Scale.types'
 
@@ -13,6 +13,8 @@ interface VisualParams {
   scales: ChartScales
   tooltip: Tooltip
   dimensions: Dimensions
+  transitionTime: number
+  clickCallback?: (e: MouseEvent, d: TableItem) => void
 }
 
 interface VisualRenderParams {

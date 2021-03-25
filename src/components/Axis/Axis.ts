@@ -16,7 +16,7 @@ import { style } from './Axis.style'
  * @class Axis
  * @constructor
  */
-class Axis {
+export class Axis {
   /**
    * SVG d3 object for d3 operations on the chart
    *
@@ -60,9 +60,19 @@ class Axis {
    */
   private dimensions: Dimensions
 
-  private axisGroupX: D3Group
+  /**
+   * The D3 selection for the X axis group
+   *
+   * @property axisGroupX
+   */
+  private readonly axisGroupX: D3Group
 
-  private axisGroupY: D3Group
+  /**
+   * The D3 selection for the Y axis group
+   *
+   * @property axisGroupX
+   */
+  private readonly axisGroupY: D3Group
 
   /**
    * Constructor function which sets up the local object.
@@ -187,5 +197,3 @@ class Axis {
     }
   }
 }
-
-export { Axis }

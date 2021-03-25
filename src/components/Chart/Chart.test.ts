@@ -2,7 +2,7 @@ import { Chart } from './'
 import jsdom from 'jsdom'
 import fs from 'fs'
 import { randomData } from '../../helpers'
-import { ChartParams } from '../../types'
+import { ChartParams, TableData } from '../../types'
 
 const index = fs.readFileSync('demo/index.html', 'utf-8')
 const { JSDOM } = jsdom
@@ -73,13 +73,37 @@ describe('Chart', () => {
   })
 
   it('should initialise then allow later addition of data', () => {
+    const { data, config, label } = randomData()
+    const chart = new Chart({
+      container: document.createElement('div'),
+      label,
+      config,
+    })
+    chart.setData(data, 'myData', 'default', false)
+    expect(chart.dataSets.get('myData')?.data).toEqual(data)
+  })
+
+  it('should initialise then allow later addition of config', () => {
+    const { data, config, label } = randomData()
+    const chart = new Chart({
+      container: document.createElement('div'),
+      label,
+      data,
+    })
+    chart.setConfig(config, 'myConfig')
+    expect(chart.configs.get('myConfig')).toEqual(config)
+  })
+
+  it('should handle min/max values', () => {
     const { data, label } = randomData()
     const chart = new Chart({
       container: document.createElement('div'),
       label,
     })
-    chart.setData(data, 'myData', 'myConfig')
-    expect(chart.dataSets.get('myData')?.data).toEqual(data)
+    data[0].values[0] = -1
+    chart.setData(data)
+    const { minValue, maxValue } = chart.dataSets.get('default') as TableData
+    expect(minValue).toBeLessThan(maxValue)
   })
 
   it('should allow removal of config and data', () => {
@@ -159,10 +183,9 @@ describe('Chart', () => {
       container: document.createElement('div'),
       ...randomData(),
     })
-    chart.addScale({ x: 'band', y: 'linear' }, 'default')
-    chart.addAxis('default', 'default')
+    chart.addScale()
     jasmine.clock().tick(600)
-    chart.addAxis('default', 'default', 'default')
+    chart.addAxis('default', 'default', 'config')
     expect(chart.axes.get('default')).toBeDefined()
   })
 
@@ -182,7 +205,7 @@ describe('Chart', () => {
       ...randomData(),
     })
     jasmine.clock().tick(600)
-    chart.addKey('default', 'default')
+    chart.addKey()
     expect(chart.keys.get('default')).toBeDefined()
   })
 
@@ -203,8 +226,30 @@ describe('Chart', () => {
       container: document.createElement('div'),
       ...randomData(),
     })
-    expect(() => chart.addKey('default')).toThrow(
+    expect(() => chart.addKey('default', 'nothing')).toThrow(
       new Error('No valid config provided for key.')
+    )
+  })
+
+  it('should add a visual', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    chart.addScale()
+    chart.addAxis()
+    chart.addVisual()
+    jasmine.clock().tick(1001)
+    expect(chart.visuals.get('default')).toBeDefined()
+  })
+
+  it('should throw an error if visual created incorrectly', () => {
+    const chart = new Chart({
+      container: document.createElement('div'),
+      ...randomData(),
+    })
+    expect(chart.addVisual).toThrow(
+      new Error('No valid config provided for visual.')
     )
   })
 })

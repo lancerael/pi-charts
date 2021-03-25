@@ -9,14 +9,15 @@
         background-color: rgb(51, 51, 51);
         color: rgb(233, 233, 233);
         font-family: sans-serif;
+        padding: 0 32px;
       }
       .container {
         position: relative;
         display: inline-block;
         min-width: 512px;
         min-height: 256px;
-        width: 49%;
-        height: 25vw;
+        width: 100%;
+        height: 50vw;
         margin-top: 8px;
       }
       .container.c1 {
@@ -51,6 +52,10 @@
         // console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
         // colorFilter,
         const chart = new pic.Chart({ container: '.container.c1', ...pic.randomData() })
+          .addScale()
+          .addAxis()
+          .addKey()
+          .addVisual()
         // const chart2 = new pic.Chart({ container: '.container.c2', ...pic.randomData()  })
         // console.log(pic.newArray(5, () => pic.randomNumber(5, 55)))
       }

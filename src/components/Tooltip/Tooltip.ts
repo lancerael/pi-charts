@@ -8,7 +8,7 @@ import { style } from './Tooltip.style'
  * @class Tooltip
  * @constructor
  */
-class Tooltip {
+export class Tooltip {
   /**
    * DOM reference to container element
    *
@@ -125,5 +125,3 @@ class Tooltip {
     if (this.hideTimeout !== undefined) clearTimeout(this.hideTimeout)
   }
 }
-
-export { Tooltip }

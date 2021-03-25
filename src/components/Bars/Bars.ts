@@ -1,21 +1,20 @@
 import { easeLinear } from 'd3-ease'
 import { ScaleBand, ScaleLinear } from 'd3-scale'
-import { BaseType, select } from 'd3-selection'
+import { select } from 'd3-selection'
 import 'd3-transition'
 import {
   ChartScales,
+  D3Group,
   Dimensions,
   TableConfig,
   TableData,
   TableItem,
-  Timeout,
   VisualParams,
   VisualRenderParams,
 } from '../../types'
 import { Tooltip } from '../'
 import { darkerColor } from '../../helpers'
-
-const TRANSITION_TIME = 1000
+import { RGBColor } from 'd3-color'
 
 /**
  * Create BarCharts from the supplied data, based on the JSON config.
@@ -23,7 +22,7 @@ const TRANSITION_TIME = 1000
  * @class BarChart
  * @constructor
  */
-class Bars {
+export class Bars {
   /**
    * The local collection of bars
    *
@@ -32,19 +31,61 @@ class Bars {
    */
   bars: any[] = []
 
-  chartGroup: any
+  /**
+   * The D3 selection for the SVG group
+   *
+   * @property chartGroup
+   */
+  chartGroup: D3Group
 
+  /**
+   * The config for the chart
+   *
+   * @property config
+   */
   config: TableConfig
 
+  /**
+   * The data for the chart
+   *
+   * @property dataSet
+   */
   dataSet: TableData
 
+  /**
+   * The scales for the chart
+   *
+   * @property scales
+   */
   scales: ChartScales
 
+  /**
+   * The chart Tooltip
+   *
+   * @property tooltip
+   */
   tooltip: Tooltip
 
+  /**
+   * The chart dimensions
+   *
+   * @property config
+   */
   dimensions: Dimensions
 
-  clickCallback?: (e: MouseEvent, d: TableItem) => void
+  /**
+   * The transition time
+   *
+   * @property transitionTime
+   */
+  transitionTime: number
+
+  /**
+   * Optional callback for clicking on the chart
+   *
+   * @property config
+   */
+  // clickCallback: (e: MouseEvent, d: TableItem) => void
 
   /**
    * Constructor used to set chart type
@@ -58,14 +99,19 @@ class Bars {
     scales,
     tooltip,
     dimensions,
+    transitionTime,
+    clickCallback,
   }: VisualParams) {
     this.config = config
     this.dataSet = dataSet
     this.scales = scales
     this.tooltip = tooltip
     this.dimensions = dimensions
+    this.transitionTime = transitionTime
+    // this.clickCallback = clickCallback ?? ((e, d) => null)
     this.chartGroup = d3Svg
       .append('g')
+      .attr('class', 'pic-bars-group')
       .attr('transform', `translate(${dimensions.padding.l}, 0)`)
     this.render({ transition: true })
   }
@@ -86,8 +132,8 @@ class Bars {
     const scaleX = this.scales.x.axisScale as ScaleBand<string>
     const scaleY = this.scales.y.axisScale as ScaleLinear<number, number>
     const barWidth = scaleX.bandwidth() / values.length
-    const barType = 'side'
-    const transitionTime = transition ? TRANSITION_TIME : 0
+    // const barType = 'side'
+    const transitionTime = transition ? this.transitionTime : 0
 
     // Reset bars data and clear graph
     if (reset) {
@@ -101,7 +147,8 @@ class Bars {
 
     // Iterate through config value keys
     values.forEach(({ rgbColor, name }, i) => {
-      const barOffset = barType === 'side' ? barWidth * i : 0
+      // const barOffset = barType === 'side' ? barWidth * i : 0
+      const barOffset = barWidth * i
       // Add bars for each value
       if (this.bars[i] === undefined) {
         // Bind bars data
@@ -116,30 +163,28 @@ class Bars {
             this.tooltip.ping([d.label, name, String(d.values[i])], e)
           })
           .on('mouseover', ({ target }: MouseEvent) => {
-            if (typeof rgbColor === 'object') {
-              select(target as Element).attr(
-                'fill',
-                darkerColor(rgbColor).formatHex()
-              )
-            }
+            select(target as HTMLElement).attr(
+              'fill',
+              darkerColor(rgbColor as RGBColor).formatHex()
+            )
           })
-          .on('mousedown', (e: MouseEvent, d: TableItem) => {
-            if (typeof this.clickCallback === 'function') {
-              this.clickCallback(e, d)
-            }
-          })
+          // .on('mousedown', (e: MouseEvent, d: TableItem) => {
+          //   this.clickCallback(e, d)
+          // })
           .on('mouseout', ({ target }: MouseEvent) => {
             this.tooltip.hide()
-            if (typeof rgbColor === 'object') {
-              select(target as Element).attr('fill', rgbColor.formatHex())
-            }
+            select(target as Element).attr(
+              'fill',
+              (rgbColor as RGBColor).formatHex()
+            )
           })
           .attr('class', `pic-bars pic-bars-${i}`)
-          .attr('fill', rgbColor)
+          .attr('fill', (rgbColor as RGBColor).formatHex())
           .attr('y', innerHeight + padding.t)
           .attr('height', 0)
       }
 
+      // Update the bars to match the latest data
       this.chartGroup
         .selectAll(`rect.pic-bars-${i}`)
         .data(data)
@@ -161,5 +206,3 @@ class Bars {
     })
   }
 }
-
-export { Bars }
