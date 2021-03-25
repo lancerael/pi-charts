@@ -11,17 +11,15 @@ const dimensions = {
   innerWidth: 0,
   innerHeight: 0,
   resizeOffset: 0,
+  padding: { l: 45, r: 5, t: 25, b: 85 },
 }
-
-const padding = { l: 45, r: 5, t: 25, b: 85 }
 
 describe('Scale', () => {
   it('should create a band Scale initialised with a dataset', () => {
     const bandScale = new Scale({
       scaleType: 'band',
-      dataSet,
+      dataSet: { data: dataSet, minValue: 0, maxValue: 100 },
       dimensions,
-      padding,
     })
     expect(bandScale.axisScale).toBeDefined()
   })
@@ -29,19 +27,17 @@ describe('Scale', () => {
   it('should create a default band Scale with a dataset added later via render', () => {
     const bandScale = new Scale({
       dimensions,
-      padding,
     })
     expect(bandScale.axisScale.domain().length).toBe(0)
-    bandScale.setData(dataSet).render()
+    bandScale.setData({ data: dataSet, minValue: 0, maxValue: 100 }).render()
     expect(bandScale.axisScale.domain().length).toBeGreaterThan(0)
   })
 
   it('should create a linear Scale initialised with a dataset', () => {
     const linearScale = new Scale({
       scaleType: 'linear',
-      dataSet,
+      dataSet: { data: dataSet, minValue: 0, maxValue: 100 },
       dimensions,
-      padding,
     })
     expect(linearScale.axisScale).toBeDefined()
   })
@@ -50,14 +46,13 @@ describe('Scale', () => {
     const bananaScale = new Scale({
       scaleType: 'banana',
       dimensions,
-      padding,
     })
     expect(() => bananaScale.render()).toThrow(
       new Error('No data to render scale!')
     )
     // @ts-expect-error - forcing incorrect usage for test
     expect(() => bananaScale.setData()).toThrow(new Error('No data to set!'))
-    bananaScale.setData(dataSet)
+    bananaScale.setData({ data: dataSet, minValue: 0, maxValue: 100 })
     expect(() => bananaScale.render()).toThrow(new Error('Unknown chart type!'))
   })
 })

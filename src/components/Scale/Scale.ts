@@ -1,6 +1,5 @@
 import { scaleLinear, scaleBand } from 'd3-scale'
-import { min, max } from 'd3-array'
-import { AxisScale, Dimensions, Padding, TableData } from '../../types'
+import { AxisScale, Dimensions, TableData } from '../../types'
 
 /**
  * Map of scale makers
@@ -18,7 +17,7 @@ const scaleMap: { [key: string]: () => AxisScale } = {
  * @class Scale
  * @constructor
  */
-class Scale {
+export class Scale {
   /**
    * The type of scale, and key to the scale map
    *
@@ -44,27 +43,18 @@ class Scale {
    */
   private readonly dimensions
 
-  /**
-   * The padding at the endes of the chart
-   * @property scaleType
-   */
-  private readonly padding
-
   constructor({
     scaleType = 'band',
     dataSet,
     dimensions,
-    padding,
   }: {
     scaleType?: string
     dimensions: Dimensions
-    padding: Padding
     dataSet?: TableData
   }) {
     this.scaleType = scaleType
     this.axisScale = scaleMap[scaleType]?.()
     this.dimensions = dimensions
-    this.padding = padding
     this.dataSet = dataSet
     if (this.dataSet !== undefined) this.render()
   }
@@ -89,21 +79,15 @@ class Scale {
    * @method render
    */
   public render = (): void => {
+    const { padding, height, innerWidth } = this.dimensions
     if (this.dataSet !== undefined) {
       if (this.scaleType === 'band') {
-        this.axisScale.domain(this.dataSet.map((d) => d.label))
-        this.axisScale.range([0, this.dimensions.innerWidth])
+        this.axisScale.domain(this.dataSet.data.map((d) => d.label))
+        this.axisScale.range([0, innerWidth])
       } else if (this.scaleType === 'linear') {
-        const minVal = min(this.dataSet, (d) => min(d.values))
-        const maxVal = max(this.dataSet, (d) => max(d.values))
-        this.axisScale.domain([minVal, maxVal])
-        this.axisScale.range([
-          this.dimensions.height - this.padding.b,
-          this.padding.t,
-        ])
+        this.axisScale.domain([this.dataSet.minValue, this.dataSet.maxValue])
+        this.axisScale.range([height - padding.b, padding.t])
       } else throw new Error('Unknown chart type!')
     } else throw new Error('No data to render scale!')
   }
 }
-
-export { Scale }

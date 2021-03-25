@@ -1,11 +1,5 @@
 import { randomNumber, newArray } from '../utilities'
-import {
-  ValueConfig,
-  TableConfig,
-  TableItem,
-  TableData,
-  ChartTable,
-} from '../../types'
+import { ValueConfig, TableConfig, TableItem, ChartTable } from '../../types'
 
 /**
  * Returns a sample selection from any array
@@ -107,7 +101,7 @@ const emptyTable = (): ChartTable => {
 const transformDataKeys = (
   config: TableConfig | undefined,
   data: any[]
-): TableData => {
+): TableItem[] => {
   if (config === undefined) return data
   return data.map(
     (item): TableItem => {

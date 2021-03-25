@@ -1,21 +1,11 @@
-import { TableConfig, TableData } from './'
+import { TableConfig, TableItem } from './'
 
 interface ChartParams {
   config?: TableConfig
-  data?: TableData
+  data?: TableItem[]
   theme?: string
   container: HTMLDivElement | string
   label: string
-}
-
-interface Dimensions {
-  left: number
-  width: number
-  top: number
-  height: number
-  innerWidth: number
-  innerHeight: number
-  resizeOffset: number
 }
 
 interface Padding {
@@ -23,6 +13,17 @@ interface Padding {
   r: number
   t: number
   b: number
+}
+
+interface Dimensions {
+  padding: Padding
+  left: number
+  width: number
+  top: number
+  height: number
+  innerWidth: number
+  innerHeight: number
+  resizeOffset: number
 }
 
 type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'

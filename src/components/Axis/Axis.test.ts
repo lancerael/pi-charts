@@ -24,23 +24,21 @@ const dimensions = {
   innerWidth: 0,
   innerHeight: 0,
   resizeOffset: 0,
+  padding: { l: 45, r: 5, t: 25, b: 85 },
 }
 
 const d3Svg = select(document.body).append('svg')
-const padding = { l: 45, r: 5, t: 25, b: 85 }
 const tooltip = new Tooltip(document.body)
 const scales = {
   x: new Scale({
     scaleType: 'band',
-    dataSet: randomData().data,
+    dataSet: { data: randomData().data, minValue: 0, maxValue: 100 },
     dimensions,
-    padding,
   }),
   y: new Scale({
     scaleType: 'linear',
-    dataSet: randomData().data,
+    dataSet: { data: randomData().data, minValue: 0, maxValue: 100 },
     dimensions,
-    padding,
   }),
 }
 const axisLabels = ['a', 'b'] as [string, string]
@@ -51,14 +49,17 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
       axisLabels,
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -67,14 +68,15 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales: { x: scales.x },
       axisLabels: ['a', ''],
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y line').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
   })
@@ -83,14 +85,15 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales: { y: scales.y },
       axisLabels: ['', 'b'],
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x text').length).toBe(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -99,7 +102,6 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -114,19 +116,22 @@ describe('Axis', () => {
     const d3Svg = select(document.body).append('svg')
     // @ts-expect-error - forcing incorrect usage for test
     axis = new Axis({
-      padding,
       d3Svg,
       tooltip,
       scales,
       axisLabels,
     })
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(0)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x text').length).toBe(0)
+    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y line').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(0)
     axis.render(dimensions)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
-    expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-x text').length
+    ).toBeGreaterThan(0)
+    expect(
+      d3Svg.node()?.querySelectorAll('.pic-axis-y line').length
+    ).toBeGreaterThan(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-y').length).toBe(1)
   })
@@ -139,11 +144,11 @@ describe('Axis', () => {
   })
 
   it('should handle tooltip events on mouse labels', () => {
+    const d3Svg = select(document.body).append('svg')
     spyOn(tooltip, 'ping')
     spyOn(tooltip, 'hide')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,
@@ -167,7 +172,6 @@ describe('Axis', () => {
     spyOn(tooltip, 'ping')
     axis = new Axis({
       dimensions,
-      padding,
       d3Svg,
       tooltip,
       scales,

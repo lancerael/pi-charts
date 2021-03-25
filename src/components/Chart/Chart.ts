@@ -1,6 +1,7 @@
+import { max, min } from 'd3-array'
 import { select } from 'd3-selection'
 import ResizeObserver from 'resize-observer-polyfill'
-import { Tooltip, Axis, Scale } from '../'
+import { Tooltip, Axis, Scale, Bars, Key } from '../'
 import {
   addColorsToConfig,
   throttle,
@@ -18,8 +19,9 @@ import {
   D3Svg,
   ChartScales,
   mapTypes,
+  Visual,
+  TableItem,
 } from '../../types'
-import { Key } from '../Key'
 import { style } from './Chart.style'
 
 /**
@@ -28,7 +30,7 @@ import { style } from './Chart.style'
  * @class Chart
  * @constructor
  */
-class Chart {
+export class Chart {
   /**
    * Default time for d3 transitions on the chart
    *
@@ -58,6 +60,13 @@ class Chart {
   private readonly title: D3Div
 
   /**
+   * The padding for the chart within the container
+   *
+   * @property padding
+   */
+  private readonly padding: Padding = { l: 45, r: 5, t: 25, b: 85 }
+
+  /**
    * The current calculated diensions of the chart
    *
    * @property dimensions
@@ -70,6 +79,7 @@ class Chart {
     innerWidth: 0,
     innerHeight: 0,
     resizeOffset: 0,
+    padding: this.padding,
   }
 
   /**
@@ -78,13 +88,6 @@ class Chart {
    * @property initialWidth
    */
   protected initialWidth = 0
-
-  /**
-   * The padding for the chart within the container
-   *
-   * @property padding
-   */
-  private readonly padding: Padding = { l: 45, r: 5, t: 25, b: 85 }
 
   /**
    * The chart's configs
@@ -120,6 +123,13 @@ class Chart {
    * @property keys
    */
   readonly keys: Map<string, Key> = new Map()
+
+  /**
+   * The chart's visuals
+   *
+   * @property visuals
+   */
+  readonly visuals: Map<string, Visual> = new Map()
 
   /**
    * The chart's label for display
@@ -176,14 +186,11 @@ class Chart {
     this.tooltip = new Tooltip(this.container)
     this.draw()
     this.initialWidth = this.dimensions.width
-    if (config !== undefined) this.setConfig('default', config)
-    if (data !== undefined) this.setData('default', data, 'default')
+    if (config !== undefined) this.setConfig(config)
+    if (data !== undefined) this.setData(data)
     publishTheme(theme)
     style()
     /* DEV START */
-    // this.addScale('default', { x: 'band', y: 'linear' })
-    // this.addAxis('default', 'default', 'default')
-    // this.addKey('default', 'default')
     // select(this.container)
     //   .on('mousemove', (e, d) =>
     //     this.tooltip.ping(['something', 'name', '123'], e)
@@ -213,16 +220,18 @@ class Chart {
    * Adds a set of config options for the chart.
    *
    * @method setConfig
+   * @chainable
    *
-   * @param configName key for the hash table
    * @param config JSON configuration object
+   * @param configName key for the hash table
    * @throws {Error} missing configuration
    */
-  public setConfig = (configName: string, config: TableConfig): void => {
+  public setConfig = (config: TableConfig, configName = 'default'): Chart => {
     if (Array.isArray(config?.values)) {
       config.values = addColorsToConfig(config.values)
       this.configs.set(configName, config)
       this.draw()
+      return this
     } else {
       throw new Error('No valid configuration provided for chart.')
     }
@@ -232,23 +241,36 @@ class Chart {
    * Add a data set for the chart.
    *
    * @method setData
+   * @chainable
+   *
    * @param dataName name for the data set
    * @param data data to set
    * @param configName name for the config
    * @throws {Error} missing data
    */
   public setData = (
-    dataName: string,
-    data: TableData,
-    configName: string
-  ): void => {
+    data: TableItem[],
+    dataName = 'default',
+    configName = 'default',
+    trim = true
+  ): Chart => {
+    const config = this.configs.get(configName)
     if (Array.isArray(data)) {
-      const config = this.configs.get(configName)
       const newData = Array.isArray(config?.values)
         ? transformDataKeys(config, data)
         : data
-      this.dataSets.set(dataName, newData)
+      let minValue = trim ? Number(min(newData, (d) => min(d.values))) : 0
+      let maxValue = Number(max(newData, (d) => max(d.values)))
+      const section = Math.ceil(maxValue / 15)
+      if (trim) {
+        const lowerSection = minValue > section ? minValue - section : 0
+        minValue = minValue > 0 ? lowerSection : minValue
+        minValue = minValue < 0 ? minValue - section : minValue
+        maxValue += section
+      }
+      this.dataSets.set(dataName, { data: newData, minValue, maxValue })
       this.draw()
+      return this
     } else {
       throw new Error('No valid data provided for chart.')
     }
@@ -258,18 +280,20 @@ class Chart {
    * Add a scale set for the chart.
    *
    * @method addScale
+   * @chainable
+   *
    * @param scaleName the name for the scale
    * @param scaleTypes the types for the scale
    * @param dataName the name of the dataset
    * @throws {Error} missing data
    */
   public addScale = (
-    scaleName: string,
-    scaleTypes: { x: string; y: string },
-    dataName: string = 'default'
-  ): void => {
+    scaleTypes: { x: string; y: string } = { x: 'band', y: 'linear' },
+    scaleName = 'default',
+    dataName = 'default'
+  ): Chart => {
     const dataSet = this.dataSets.get(dataName)
-    if (truthy(scaleName) && dataSet !== undefined) {
+    if (dataSet !== undefined) {
       this.scales.set(
         scaleName,
         Object.entries(scaleTypes).reduce(
@@ -279,13 +303,13 @@ class Chart {
               scaleType,
               dataSet: this.dataSets.get(dataName),
               dimensions: this.dimensions,
-              padding: this.padding,
             }),
           }),
           {}
         ) as ChartScales
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for scale.')
     }
@@ -295,6 +319,7 @@ class Chart {
    * Adds a set of config options for the chart.
    *
    * @method addAxis
+   * @chainable
    *
    * @param axisName key for the hash table
    * @param scaleName the name for the associated d3 scale
@@ -302,25 +327,25 @@ class Chart {
    * @throws {Error} missing configuration
    */
   public addAxis = (
-    axisName: string,
-    scaleName: string,
-    configName: string = ''
-  ): void => {
+    axisName = 'default',
+    scaleName = 'default',
+    configName = 'default'
+  ): Chart => {
     const scales = this.scales.get(scaleName)
-    if (truthy(axisName) && scales !== undefined) {
+    if (scales !== undefined) {
       this.axes.set(
         axisName,
         new Axis({
           d3Svg: this.d3Svg,
           tooltip: this.tooltip,
           dimensions: this.dimensions,
-          padding: this.padding,
           truncate: 10,
           axisLabels: this.configs.get(configName)?.axisLabels ?? ['', ''],
           scales,
         })
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for axis.')
     }
@@ -329,27 +354,71 @@ class Chart {
   /**
    * Adds a set of keys to the chart.
    *
-   * @method setConfig
+   * @method addKey
+   * @chainable
    *
    * @param keyName name for the hash table
    * @param configName the name for the associated JSON configuration object
    * @throws {Error} missing configuration
    */
-  public addKey = (keyName: string, configName: string = ''): void => {
+  public addKey = (keyName = 'default', configName = 'default'): Chart => {
     const config = this.configs.get(configName)
-    if (truthy(keyName) && config !== undefined) {
+    if (config !== undefined) {
       this.keys.set(
         keyName,
         new Key({
           d3Svg: this.d3Svg,
           values: config?.values ?? [],
           dimensions: this.dimensions,
-          padding: this.padding,
         })
       )
       this.draw()
+      return this
     } else {
       throw new Error('No valid config provided for key.')
+    }
+  }
+
+  /**
+   * Adds a set of keys to the chart.
+   *
+   * @method addVisual
+   * @chainable
+   *
+   * @param keyName name for the hash table
+   * @param configName the name for the associated JSON configuration object
+   * @throws {Error} missing configuration
+   */
+  public addVisual = (
+    keyName = 'default',
+    configName = 'default',
+    dataName = 'default',
+    scalesName = 'default',
+    type = 'bar',
+    transitionTime = 1000
+  ): Chart => {
+    const config = this.configs.get(configName)
+    const dataSet = this.dataSets.get(dataName)
+    const scales = this.scales.get(scalesName)
+    if (config !== undefined && dataSet !== undefined && scales !== undefined) {
+      const params = {
+        d3Svg: this.d3Svg,
+        config,
+        dataSet,
+        scales,
+        transitionTime,
+        tooltip: this.tooltip,
+        dimensions: this.dimensions,
+      }
+      switch (type) {
+        default: {
+          setTimeout(() => this.visuals.set(keyName, new Bars(params)))
+        }
+      }
+      setTimeout(this.draw, transitionTime)
+      return this
+    } else {
+      throw new Error('No valid config provided for visual.')
     }
   }
 
@@ -357,17 +426,19 @@ class Chart {
    * Removes an item from one of the maps.
    *
    * @method deleteMapItem
+   * @chainable
    *
    * @param mapName the name of the map to target
    * @param mapItemName key for the map item to be deleted
    * @throws {Error} ite does not exist in map
    */
-  public deleteMapItem = (mapName: mapTypes, mapItemName: string): void => {
+  public deleteMapItem = (mapName: mapTypes, mapItemName: string): Chart => {
     const mapItem = this[mapName]?.get(mapItemName)
     if (mapItem !== undefined) {
       // if (mapItem.remove) ()
       this[mapName].delete(mapItemName)
       this.draw()
+      return this
     } else {
       throw new Error(
         `Failed attempting to delete "${mapItemName}" from "this.${mapName}".`
@@ -390,6 +461,7 @@ class Chart {
     this.dimensions.innerWidth = width - l - r
     this.dimensions.innerHeight = height - t - b
     this.dimensions.resizeOffset = width - this.initialWidth
+    this.dimensions.padding = this.padding
   }
 
   /**
@@ -407,11 +479,11 @@ class Chart {
   }
 
   /**
-   * Redraw the chart
+   * Draw the chart
    *
    * @method draw
    */
-  private readonly draw = throttle((): void => {
+  private readonly draw = (): void => {
     this.updateDimensions()
     this.renderChart()
     this.scales.forEach((chartScales: ChartScales) =>
@@ -419,13 +491,19 @@ class Chart {
     )
     this.axes.forEach((axis: Axis) => axis.render())
     this.keys.forEach((key: Key) => key.render())
-  })
+    this.visuals.forEach((visual: Visual) => visual.render({ reset: true }))
+  }
+
+  /**
+   * Redraw the chart
+   *
+   * @method redraw
+   */
+  private readonly redraw = throttle(this.draw)
 
   /**
    * Watcher for the resize event
    *
    */
-  private readonly resizeWatcher = new ResizeObserver(this.draw)
+  private readonly resizeWatcher = new ResizeObserver(this.redraw)
 }
-
-export { Chart }

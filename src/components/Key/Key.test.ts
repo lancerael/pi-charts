@@ -9,7 +9,6 @@ const dom = new JSDOM(index)
 global.document = dom.window.document
 
 const d3Svg = select(document.body).append('svg')
-const padding = { l: 45, r: 5, t: 25, b: 85 }
 const dimensions = {
   left: 0,
   width: 0,
@@ -18,6 +17,7 @@ const dimensions = {
   innerWidth: 0,
   innerHeight: 0,
   resizeOffset: 0,
+  padding: { l: 45, r: 5, t: 25, b: 85 },
 }
 const values = [
   { name: 'Type 1', labelWidth: 22 },
@@ -51,7 +51,6 @@ describe('Key', () => {
           values,
           d3Svg,
           dimensions,
-          padding,
         })
     ).not.toThrow()
     expect(

@@ -1,8 +1,13 @@
 import { axisBottom, axisLeft } from 'd3-axis'
-import { Dimensions, Padding, D3Svg, ChartScales } from '../../types'
+import {
+  Dimensions,
+  D3Svg,
+  ChartScales,
+  AxisParams,
+  D3Group,
+} from '../../types'
 import { truncateString, truthy } from '../../helpers'
 import { Tooltip } from '../Tooltip'
-import { AxisParams } from '../../types/Axis.types'
 import { style } from './Axis.style'
 
 /**
@@ -11,7 +16,7 @@ import { style } from './Axis.style'
  * @class Axis
  * @constructor
  */
-class Axis {
+export class Axis {
   /**
    * SVG d3 object for d3 operations on the chart
    *
@@ -56,11 +61,18 @@ class Axis {
   private dimensions: Dimensions
 
   /**
-   * The padding for the chart within the container
+   * The D3 selection for the X axis group
    *
-   * @property padding
+   * @property axisGroupX
    */
-  private readonly padding: Padding
+  private readonly axisGroupX: D3Group
+
+  /**
+   * The D3 selection for the Y axis group
+   *
+   * @property axisGroupX
+   */
+  private readonly axisGroupY: D3Group
 
   /**
    * Constructor function which sets up the local object.
@@ -69,7 +81,6 @@ class Axis {
    * @param d3Svg containing d3 SVG
    * @param tooltip tooltip div
    * @param dimensions chart dimensions
-   * @param padding chart padding
    * @param truncate text truncate length
    * @param axisLabels chart axis labels
    * @param scales chart axis scales
@@ -79,7 +90,6 @@ class Axis {
     d3Svg,
     tooltip,
     dimensions,
-    padding,
     truncate = 2,
     axisLabels,
     scales,
@@ -88,10 +98,11 @@ class Axis {
       this.dimensions = dimensions
       this.d3Svg = d3Svg
       this.tooltip = tooltip
-      this.padding = padding
       this.truncate = truncate
       this.axisLabels = axisLabels ?? ['', '']
       this.scales = scales
+      this.axisGroupX = d3Svg.append('g').attr('class', 'pic-axis pic-axis-x')
+      this.axisGroupY = d3Svg.append('g').attr('class', 'pic-axis pic-axis-y')
       this.render()
       style()
     } else {
@@ -119,18 +130,11 @@ class Axis {
    * @method renderAxisX
    */
   public renderAxisX(): void {
-    this.d3Svg.selectAll('g.pic-axis-x').remove()
+    const { height, padding } = this.dimensions
     if (this.scales.x !== undefined) {
-      this.d3Svg
-        .append('g')
-        .attr('class', 'pic-axis pic-axis-x')
+      this.axisGroupX
         .call(axisBottom(this.scales.x.axisScale))
-        .attr(
-          'transform',
-          `translate(${this.padding.l},${
-            this.dimensions.height - this.padding.b
-          })`
-        )
+        .attr('transform', `translate(${padding.l},${height - padding.b})`)
         .selectAll('text')
         .attr('x', -5)
         .attr('y', 6)
@@ -139,11 +143,11 @@ class Axis {
         .text((d) => truncateString(d as string, this.truncate))
         .style('text-anchor', 'end')
         .on('mousemove', (e, d) => {
-          if (truthy(this.tooltip) && (d as string).length > this.truncate) {
+          if ((d as string).length > this.truncate) {
             this.tooltip.ping(`<strong>${d as string}</strong>`, e)
           }
         })
-        .on('mouseout', (e, d) => this.tooltip.hide())
+        .on('mouseout', this.tooltip.hide)
     }
   }
 
@@ -153,16 +157,14 @@ class Axis {
    * @method renderAxisY
    */
   public renderAxisY(): void {
-    this.d3Svg.selectAll('g.pic-axis-y').remove()
+    const { innerWidth, padding } = this.dimensions
     if (this.scales.y !== undefined) {
-      this.d3Svg
-        .append('g')
-        .attr('class', 'pic-axis pic-axis-y')
+      this.axisGroupY
         .call(axisLeft(this.scales.y.axisScale))
-        .attr('transform', `translate(${this.padding.l},0)`)
+        .attr('transform', `translate(${padding.l},0)`)
         .selectAll('.pic-axis-y .tick line')
         .attr('class', 'pic-line')
-        .attr('x2', () => this.dimensions.innerWidth)
+        .attr('x2', () => innerWidth)
     }
   }
 
@@ -172,12 +174,13 @@ class Axis {
    * @method renderLabels
    */
   public renderLabels(): void {
+    const { height, width, padding } = this.dimensions
     this.d3Svg.selectAll('text.pic-label').remove()
     if (truthy(this.axisLabels[0])) {
       this.d3Svg
         .append('text')
         .attr('class', 'pic-label pic-label-x')
-        .attr('x', this.dimensions.height / -2 + this.padding.b / 2)
+        .attr('x', height / -2 + padding.b / 2)
         .attr('y', 20)
         .attr('transform', 'rotate(-90)')
         .attr('text-anchor', 'middle')
@@ -187,15 +190,10 @@ class Axis {
       this.d3Svg
         .append('text')
         .attr('class', 'pic-label pic-label-y')
-        .attr(
-          'x',
-          (this.dimensions.width + this.padding.l + this.padding.r) / 2
-        )
-        .attr('y', this.dimensions.height - this.padding.b / 3)
+        .attr('x', (width + padding.l + padding.r) / 2)
+        .attr('y', height - padding.b / 3)
         .attr('text-anchor', 'middle')
         .text(this.axisLabels[1])
     }
   }
 }
-
-export { Axis }
