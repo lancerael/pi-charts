@@ -13,4 +13,9 @@ Built using d3 and TypeScript.
 The aim of this project is to provide a simple API for the creation of D3 charts within any client side framework.
 Charts are responsive in any device, providing additional detail via hover/touch tooltips.
 
+* INSTALL - `yarn`
+* RUN - `yarn start`
+* TEST - `yarn test`
+* BUILD - `yarn build`
+
 (NEW PROJECT - LIBRARY NOT READY FOR USE YET)
