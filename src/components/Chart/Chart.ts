@@ -430,7 +430,7 @@ export class Chart {
    *
    * @param mapName the name of the map to target
    * @param mapItemName key for the map item to be deleted
-   * @throws {Error} ite does not exist in map
+   * @throws {Error} item does not exist in map
    */
   public deleteMapItem = (mapName: mapTypes, mapItemName: string): Chart => {
     const mapItem = this[mapName]?.get(mapItemName)
@@ -445,6 +445,19 @@ export class Chart {
       )
     }
   }
+
+  /**
+   * Adds default features to the chart
+   */
+  public addDefaults = (): Chart => {
+    return this
+      .addScale()
+      .addAxis()
+      .addKey()
+      .addVisual()
+  }
+    
+
 
   /**
    * Sets the local chart dimensions based on the size of the container.
@@ -506,4 +519,5 @@ export class Chart {
    *
    */
   private readonly resizeWatcher = new ResizeObserver(this.redraw)
+
 }

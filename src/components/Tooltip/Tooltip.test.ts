@@ -1,4 +1,5 @@
 import { Tooltip } from './'
+import { dispatchEvent } from '../../helpers/testing'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
@@ -9,13 +10,6 @@ const dom = new JSDOM(index)
 global.document = dom.window.document
 
 jasmine.clock().install()
-
-const dispatchEvent = (element: HTMLElement, eventType: string): MouseEvent => {
-  const event = document.createEvent('MouseEvents')
-  event.initEvent(eventType, true, true)
-  element.dispatchEvent(event)
-  return event
-}
 
 const getFlatTooltip = (container: HTMLElement): any =>
   JSON.parse(JSON.stringify(new Tooltip(container)))

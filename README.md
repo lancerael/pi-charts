@@ -9,8 +9,29 @@ A charting library for visualization of complex data, to be used in any JavaScri
 
 ## Overview
 
-Built using d3 and TypeScript.
-The aim of this project is to provide a simple API for the creation of D3 charts within any client side framework.
-Charts are responsive in any device, providing additional detail via hover/touch tooltips.
+A simple API for the creation of SVG charts.
+Responsive in any device, providing additional detail via hover/touch tooltips.
 
-(NEW PROJECT - LIBRARY NOT READY FOR USE YET)
+## Charts added so far
+
+# Bar Chart
+
+```
+<div class="container"></div>
+<script>
+  window.onload = function () {
+    const chart = new Chart({ container: '.container', randomData() }).addDefaults()
+  }
+</script>
+```
+
+## NPM / Yarn tasks
+
+`lint`: Code formatting
+`test`: Run simple unit tests
+`build`: Build distributable
+`start`: Run development server
+
+## Work in progress
+
+This is a very early alpha - expect many more chart variations and features in the first full release.
