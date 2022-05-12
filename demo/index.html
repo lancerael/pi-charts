@@ -51,11 +51,11 @@
         // console.log('randomPalette', pic.randomPalette())
         // console.log('addColorsToConfig', pic.addColorsToConfig(config.values))
         // colorFilter,
-        const chart = new pic.Chart({ container: '.container.c1', ...pic.randomData() })
-          .addScale()
-          .addAxis()
-          .addKey()
-          .addVisual()
+        const chart = new pic.Chart({ container: '.container.c1', ...pic.randomData() }).addDefaults()
+          // .addScale()
+          // .addAxis()
+          // .addKey()
+          // .addVisual()
         // const chart2 = new pic.Chart({ container: '.container.c2', ...pic.randomData()  })
         // console.log(pic.newArray(5, () => pic.randomNumber(5, 55)))
       }

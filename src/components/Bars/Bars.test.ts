@@ -1,5 +1,6 @@
 import { Bars, Tooltip, Scale } from '../'
 import { randomData, addColorsToConfig } from '../../helpers'
+import { dispatchEvent } from '../../helpers/testing'
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'
@@ -8,13 +9,6 @@ const { JSDOM } = jsdom
 const index = fs.readFileSync('demo/index.html', 'utf-8')
 const dom = new JSDOM(index)
 global.document = dom.window.document
-
-const dispatchEvent = (element: HTMLElement, eventType: string): MouseEvent => {
-  const event = document.createEvent('MouseEvents')
-  event.initEvent(eventType, true, true)
-  element.dispatchEvent(event)
-  return event
-}
 
 const dimensions = {
   left: 0,
