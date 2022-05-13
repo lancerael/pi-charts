@@ -20,7 +20,7 @@ Responsive in any device, providing additional detail via hover/touch tooltips.
 <div class="container"></div>
 <script>
   window.onload = function () {
-    const chart = new Chart({ container: '.container', randomData() }).addDefaults()
+    const chart = new Chart({ container: '.container', ...randomData() }).addDefaults()
   }
 </script>
 ```
