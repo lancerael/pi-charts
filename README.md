@@ -27,10 +27,10 @@ Responsive in any device, providing additional detail via hover/touch tooltips.
 
 ## NPM / Yarn tasks
 
-`lint`: Code formatting
-`test`: Run simple unit tests
-`build`: Build distributable
-`start`: Run development server
+- `lint`: Code formatting
+- `test`: Run unit tests
+- `build`: Build distributable
+- `start`: Run development server
 
 ## Work in progress
 
