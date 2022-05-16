@@ -21,6 +21,7 @@ import {
   mapTypes,
   Visual,
   TableItem,
+  ScaleType,
 } from '../../types'
 import { style } from './Chart.style'
 
@@ -300,7 +301,7 @@ export class Chart {
         (chartScales, [direction, scaleType]: [string, string]) => ({
           ...chartScales,
           [direction]: new Scale({
-            scaleType,
+            scaleType: scaleType as ScaleType,
             dataSet: this.dataSets.get(dataName),
             dimensions: this.dimensions,
           }),

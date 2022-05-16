@@ -102,6 +102,9 @@ export class Bars {
     transitionTime,
     clickCallback,
   }: VisualParams) {
+    if (config === undefined || dataSet === undefined || scales === undefined) {
+      throw new Error('Table is incorrectly initialised.')
+    }
     this.config = config
     this.dataSet = dataSet
     this.scales = scales

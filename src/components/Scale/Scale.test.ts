@@ -44,6 +44,7 @@ describe('Scale', () => {
 
   it('should throw correct errors', () => {
     const bananaScale = new Scale({
+      // @ts-expect-error - forcing incorrect usage for test
       scaleType: 'banana',
       dimensions,
     })

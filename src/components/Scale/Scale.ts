@@ -1,5 +1,5 @@
 import { scaleLinear, scaleBand } from 'd3-scale'
-import { AxisScale, Dimensions, TableData } from '../../types'
+import { AxisScale, Dimensions, TableData, ScaleType } from '../../types'
 
 /**
  * Map of scale makers
@@ -23,7 +23,7 @@ export class Scale {
    *
    * @property scaleType
    */
-  private readonly scaleType: string
+  private readonly scaleType: ScaleType | undefined
 
   /**
    * The d3 scale
@@ -48,7 +48,7 @@ export class Scale {
     dataSet,
     dimensions,
   }: {
-    scaleType?: string
+    scaleType?: ScaleType
     dimensions: Dimensions
     dataSet?: TableData
   }) {
@@ -81,6 +81,11 @@ export class Scale {
   public render = (): void => {
     const { padding, height, innerWidth } = this.dimensions
     if (this.dataSet === undefined) throw new Error('No data to render scale!')
+    if (
+      this.scaleType === undefined ||
+      !['band', 'linear'].includes(this.scaleType)
+    )
+      throw new Error('Unknown chart type!')
     const scaleArrays = {
       band: [this.dataSet.data.map((d) => d.label), [0, innerWidth]],
       linear: [
@@ -88,7 +93,6 @@ export class Scale {
         [height - padding.b, padding.t],
       ],
     }[this.scaleType]
-    if (scaleArrays === undefined) throw new Error('Unknown chart type!')
     this.axisScale.domain(scaleArrays[0])
     this.axisScale.range(scaleArrays[1])
   }
