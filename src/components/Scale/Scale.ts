@@ -68,8 +68,8 @@ export class Scale {
    * @chainable
    */
   public setData = (dataSet: TableData): Scale => {
-    if (dataSet !== undefined) this.dataSet = dataSet
-    else throw new Error('No data to set!')
+    if (dataSet === undefined) throw new Error('No data to set!')
+    this.dataSet = dataSet
     return this
   }
 
@@ -80,14 +80,16 @@ export class Scale {
    */
   public render = (): void => {
     const { padding, height, innerWidth } = this.dimensions
-    if (this.dataSet !== undefined) {
-      if (this.scaleType === 'band') {
-        this.axisScale.domain(this.dataSet.data.map((d) => d.label))
-        this.axisScale.range([0, innerWidth])
-      } else if (this.scaleType === 'linear') {
-        this.axisScale.domain([this.dataSet.minValue, this.dataSet.maxValue])
-        this.axisScale.range([height - padding.b, padding.t])
-      } else throw new Error('Unknown chart type!')
-    } else throw new Error('No data to render scale!')
+    if (this.dataSet === undefined) throw new Error('No data to render scale!')
+    const scaleArrays = {
+      band: [this.dataSet.data.map((d) => d.label), [0, innerWidth]],
+      linear: [
+        [this.dataSet.minValue, this.dataSet.maxValue],
+        [height - padding.b, padding.t],
+      ],
+    }[this.scaleType]
+    if (scaleArrays === undefined) throw new Error('Unknown chart type!')
+    this.axisScale.domain(scaleArrays[0])
+    this.axisScale.range(scaleArrays[1])
   }
 }

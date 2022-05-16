@@ -43,14 +43,13 @@ export class Key {
    * @param {Integer} dimensions the chart dimensions
    */
   constructor({ d3Svg, values, dimensions }: KeyParams) {
-    if ([d3Svg, values, dimensions].every(truthy)) {
-      this.d3Svg = d3Svg
-      this.values = [...values]
-      this.dimensions = dimensions
-      this.render()
-    } else {
+    if (![d3Svg, values, dimensions].every(truthy)) {
       throw new Error('Incorrect parameters provided to Key constructor.')
     }
+    this.d3Svg = d3Svg
+    this.values = [...values]
+    this.dimensions = dimensions
+    this.render()
   }
 
   /**
