@@ -10,4 +10,6 @@ interface AxisParams {
   scales: ChartScales
 }
 
-export { AxisParams }
+type ScaleType = 'band' | 'linear'
+
+export { AxisParams, ScaleType }

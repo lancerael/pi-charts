@@ -8,9 +8,9 @@ type Visual = Bars
 
 interface VisualParams {
   d3Svg: D3Svg
-  config: TableConfig
-  dataSet: TableData
-  scales: ChartScales
+  config?: TableConfig
+  dataSet?: TableData
+  scales?: ChartScales
   tooltip: Tooltip
   dimensions: Dimensions
   transitionTime: number

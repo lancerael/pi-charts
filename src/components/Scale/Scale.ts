@@ -1,5 +1,5 @@
 import { scaleLinear, scaleBand } from 'd3-scale'
-import { AxisScale, Dimensions, TableData } from '../../types'
+import { AxisScale, Dimensions, TableData, ScaleType } from '../../types'
 
 /**
  * Map of scale makers
@@ -23,7 +23,7 @@ export class Scale {
    *
    * @property scaleType
    */
-  private readonly scaleType: string
+  private readonly scaleType: ScaleType | undefined
 
   /**
    * The d3 scale
@@ -48,7 +48,7 @@ export class Scale {
     dataSet,
     dimensions,
   }: {
-    scaleType?: string
+    scaleType?: ScaleType
     dimensions: Dimensions
     dataSet?: TableData
   }) {
@@ -68,8 +68,8 @@ export class Scale {
    * @chainable
    */
   public setData = (dataSet: TableData): Scale => {
-    if (dataSet !== undefined) this.dataSet = dataSet
-    else throw new Error('No data to set!')
+    if (dataSet === undefined) throw new Error('No data to set!')
+    this.dataSet = dataSet
     return this
   }
 
@@ -80,14 +80,20 @@ export class Scale {
    */
   public render = (): void => {
     const { padding, height, innerWidth } = this.dimensions
-    if (this.dataSet !== undefined) {
-      if (this.scaleType === 'band') {
-        this.axisScale.domain(this.dataSet.data.map((d) => d.label))
-        this.axisScale.range([0, innerWidth])
-      } else if (this.scaleType === 'linear') {
-        this.axisScale.domain([this.dataSet.minValue, this.dataSet.maxValue])
-        this.axisScale.range([height - padding.b, padding.t])
-      } else throw new Error('Unknown chart type!')
-    } else throw new Error('No data to render scale!')
+    if (this.dataSet === undefined) throw new Error('No data to render scale!')
+    if (
+      this.scaleType === undefined ||
+      !['band', 'linear'].includes(this.scaleType)
+    )
+      throw new Error('Unknown chart type!')
+    const scaleArrays = {
+      band: [this.dataSet.data.map((d) => d.label), [0, innerWidth]],
+      linear: [
+        [this.dataSet.minValue, this.dataSet.maxValue],
+        [height - padding.b, padding.t],
+      ],
+    }[this.scaleType]
+    this.axisScale.domain(scaleArrays[0])
+    this.axisScale.range(scaleArrays[1])
   }
 }

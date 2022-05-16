@@ -94,20 +94,17 @@ export class Axis {
     axisLabels,
     scales,
   }: AxisParams) {
-    if (truthy(d3Svg)) {
-      this.dimensions = dimensions
-      this.d3Svg = d3Svg
-      this.tooltip = tooltip
-      this.truncate = truncate
-      this.axisLabels = axisLabels ?? ['', '']
-      this.scales = scales
-      this.axisGroupX = d3Svg.append('g').attr('class', 'pic-axis pic-axis-x')
-      this.axisGroupY = d3Svg.append('g').attr('class', 'pic-axis pic-axis-y')
-      this.render()
-      style()
-    } else {
-      throw new Error('No SVG provided to Axis constructor.')
-    }
+    if (!truthy(d3Svg)) throw new Error('No SVG provided to Axis constructor.')
+    this.dimensions = dimensions
+    this.d3Svg = d3Svg
+    this.tooltip = tooltip
+    this.truncate = truncate
+    this.axisLabels = axisLabels ?? ['', '']
+    this.scales = scales
+    this.axisGroupX = d3Svg.append('g').attr('class', 'pic-axis pic-axis-x')
+    this.axisGroupY = d3Svg.append('g').attr('class', 'pic-axis pic-axis-y')
+    this.render()
+    style()
   }
 
   /**
@@ -117,11 +114,10 @@ export class Axis {
    */
   public render(dimensions?: Dimensions): void {
     if (dimensions !== undefined) this.dimensions = dimensions
-    if (this.dimensions !== undefined) {
-      this.renderAxisX()
-      this.renderAxisY()
-      this.renderLabels()
-    }
+    if (this.dimensions === undefined) return
+    this.renderAxisX()
+    this.renderAxisY()
+    this.renderLabels()
   }
 
   /**
@@ -131,24 +127,23 @@ export class Axis {
    */
   public renderAxisX(): void {
     const { height, padding } = this.dimensions
-    if (this.scales.x !== undefined) {
-      this.axisGroupX
-        .call(axisBottom(this.scales.x.axisScale))
-        .attr('transform', `translate(${padding.l},${height - padding.b})`)
-        .selectAll('text')
-        .attr('x', -5)
-        .attr('y', 6)
-        .attr('transform', 'rotate(310)')
-        .attr('class', 'pic-axis-label pic-axis-label-x')
-        .text((d) => truncateString(d as string, this.truncate))
-        .style('text-anchor', 'end')
-        .on('mousemove', (e, d) => {
-          if ((d as string).length > this.truncate) {
-            this.tooltip.ping(`<strong>${d as string}</strong>`, e)
-          }
-        })
-        .on('mouseout', this.tooltip.hide)
-    }
+    if (this.scales.x === undefined) return
+    this.axisGroupX
+      .call(axisBottom(this.scales.x.axisScale))
+      .attr('transform', `translate(${padding.l},${height - padding.b})`)
+      .selectAll('text')
+      .attr('x', -5)
+      .attr('y', 6)
+      .attr('transform', 'rotate(310)')
+      .attr('class', 'pic-axis-label pic-axis-label-x')
+      .text((d) => truncateString(d as string, this.truncate))
+      .style('text-anchor', 'end')
+      .on('mousemove', (e, d) => {
+        if ((d as string).length > this.truncate) {
+          this.tooltip.ping(`<strong>${d as string}</strong>`, e)
+        }
+      })
+      .on('mouseout', this.tooltip.hide)
   }
 
   /**
@@ -158,14 +153,13 @@ export class Axis {
    */
   public renderAxisY(): void {
     const { innerWidth, padding } = this.dimensions
-    if (this.scales.y !== undefined) {
-      this.axisGroupY
-        .call(axisLeft(this.scales.y.axisScale))
-        .attr('transform', `translate(${padding.l},0)`)
-        .selectAll('.pic-axis-y .tick line')
-        .attr('class', 'pic-line')
-        .attr('x2', () => innerWidth)
-    }
+    if (this.scales.y === undefined) return
+    this.axisGroupY
+      .call(axisLeft(this.scales.y.axisScale))
+      .attr('transform', `translate(${padding.l},0)`)
+      .selectAll('.pic-axis-y .tick line')
+      .attr('class', 'pic-line')
+      .attr('x2', () => innerWidth)
   }
 
   /**

@@ -45,13 +45,12 @@ export class Tooltip {
    * @throws {Error} invalid DOM element
    */
   constructor(container: HTMLElement) {
-    if (truthy(container.nodeName)) {
-      this.container = container
-      this.tooltip = createNode('div', 'pic-tooltip', container)
-      style()
-    } else {
+    if (!truthy(container.nodeName)) {
       throw new Error('The tooltip has no valid container element.')
     }
+    this.container = container
+    this.tooltip = createNode('div', 'pic-tooltip', container)
+    style()
   }
 
   /**

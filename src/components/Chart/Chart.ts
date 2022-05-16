@@ -21,6 +21,7 @@ import {
   mapTypes,
   Visual,
   TableItem,
+  ScaleType,
 } from '../../types'
 import { style } from './Chart.style'
 
@@ -227,14 +228,13 @@ export class Chart {
    * @throws {Error} missing configuration
    */
   public setConfig = (config: TableConfig, configName = 'default'): Chart => {
-    if (Array.isArray(config?.values)) {
-      config.values = addColorsToConfig(config.values)
-      this.configs.set(configName, config)
-      this.draw()
-      return this
-    } else {
+    if (!Array.isArray(config?.values)) {
       throw new Error('No valid configuration provided for chart.')
     }
+    config.values = addColorsToConfig(config.values)
+    this.configs.set(configName, config)
+    this.draw()
+    return this
   }
 
   /**
@@ -255,25 +255,24 @@ export class Chart {
     trim = true
   ): Chart => {
     const config = this.configs.get(configName)
-    if (Array.isArray(data)) {
-      const newData = Array.isArray(config?.values)
-        ? transformDataKeys(config, data)
-        : data
-      let minValue = trim ? Number(min(newData, (d) => min(d.values))) : 0
-      let maxValue = Number(max(newData, (d) => max(d.values)))
-      const section = Math.ceil(maxValue / 15)
-      if (trim) {
-        const lowerSection = minValue > section ? minValue - section : 0
-        minValue = minValue > 0 ? lowerSection : minValue
-        minValue = minValue < 0 ? minValue - section : minValue
-        maxValue += section
-      }
-      this.dataSets.set(dataName, { data: newData, minValue, maxValue })
-      this.draw()
-      return this
-    } else {
+    if (!Array.isArray(data)) {
       throw new Error('No valid data provided for chart.')
     }
+    const newData = Array.isArray(config?.values)
+      ? transformDataKeys(config, data)
+      : data
+    let minValue = trim ? Number(min(newData, (d) => min(d.values))) : 0
+    let maxValue = Number(max(newData, (d) => max(d.values)))
+    const section = Math.ceil(maxValue / 15)
+    if (trim) {
+      const lowerSection = minValue > section ? minValue - section : 0
+      minValue = minValue > 0 ? lowerSection : minValue
+      minValue = minValue < 0 ? minValue - section : minValue
+      maxValue += section
+    }
+    this.dataSets.set(dataName, { data: newData, minValue, maxValue })
+    this.draw()
+    return this
   }
 
   /**
@@ -293,26 +292,25 @@ export class Chart {
     dataName = 'default'
   ): Chart => {
     const dataSet = this.dataSets.get(dataName)
-    if (dataSet !== undefined) {
-      this.scales.set(
-        scaleName,
-        Object.entries(scaleTypes).reduce(
-          (chartScales, [direction, scaleType]: [string, string]) => ({
-            ...chartScales,
-            [direction]: new Scale({
-              scaleType,
-              dataSet: this.dataSets.get(dataName),
-              dimensions: this.dimensions,
-            }),
-          }),
-          {}
-        ) as ChartScales
-      )
-      this.draw()
-      return this
-    } else {
+    if (dataSet === undefined) {
       throw new Error('No valid config provided for scale.')
     }
+    this.scales.set(
+      scaleName,
+      Object.entries(scaleTypes).reduce(
+        (chartScales, [direction, scaleType]: [string, string]) => ({
+          ...chartScales,
+          [direction]: new Scale({
+            scaleType: scaleType as ScaleType,
+            dataSet: this.dataSets.get(dataName),
+            dimensions: this.dimensions,
+          }),
+        }),
+        {}
+      ) as ChartScales
+    )
+    this.draw()
+    return this
   }
 
   /**
@@ -332,23 +330,22 @@ export class Chart {
     configName = 'default'
   ): Chart => {
     const scales = this.scales.get(scaleName)
-    if (scales !== undefined) {
-      this.axes.set(
-        axisName,
-        new Axis({
-          d3Svg: this.d3Svg,
-          tooltip: this.tooltip,
-          dimensions: this.dimensions,
-          truncate: 10,
-          axisLabels: this.configs.get(configName)?.axisLabels ?? ['', ''],
-          scales,
-        })
-      )
-      this.draw()
-      return this
-    } else {
+    if (scales === undefined) {
       throw new Error('No valid config provided for axis.')
     }
+    this.axes.set(
+      axisName,
+      new Axis({
+        d3Svg: this.d3Svg,
+        tooltip: this.tooltip,
+        dimensions: this.dimensions,
+        truncate: 10,
+        axisLabels: this.configs.get(configName)?.axisLabels ?? ['', ''],
+        scales,
+      })
+    )
+    this.draw()
+    return this
   }
 
   /**
@@ -363,20 +360,19 @@ export class Chart {
    */
   public addKey = (keyName = 'default', configName = 'default'): Chart => {
     const config = this.configs.get(configName)
-    if (config !== undefined) {
-      this.keys.set(
-        keyName,
-        new Key({
-          d3Svg: this.d3Svg,
-          values: config?.values ?? [],
-          dimensions: this.dimensions,
-        })
-      )
-      this.draw()
-      return this
-    } else {
+    if (config === undefined) {
       throw new Error('No valid config provided for key.')
     }
+    this.keys.set(
+      keyName,
+      new Key({
+        d3Svg: this.d3Svg,
+        values: config?.values ?? [],
+        dimensions: this.dimensions,
+      })
+    )
+    this.draw()
+    return this
   }
 
   /**
@@ -400,26 +396,24 @@ export class Chart {
     const config = this.configs.get(configName)
     const dataSet = this.dataSets.get(dataName)
     const scales = this.scales.get(scalesName)
-    if (config !== undefined && dataSet !== undefined && scales !== undefined) {
-      const params = {
-        d3Svg: this.d3Svg,
-        config,
-        dataSet,
-        scales,
-        transitionTime,
-        tooltip: this.tooltip,
-        dimensions: this.dimensions,
-      }
-      switch (type) {
-        default: {
-          setTimeout(() => this.visuals.set(keyName, new Bars(params)))
-        }
-      }
-      setTimeout(this.draw, transitionTime)
-      return this
-    } else {
-      throw new Error('No valid config provided for visual.')
+    const hasError = [config, dataSet, scales].includes(undefined)
+    if (hasError) throw new Error('No valid config provided for visual.')
+    const params = {
+      d3Svg: this.d3Svg,
+      config,
+      dataSet,
+      scales,
+      transitionTime,
+      tooltip: this.tooltip,
+      dimensions: this.dimensions,
     }
+    switch (type) {
+      default: {
+        setTimeout(() => this.visuals.set(keyName, new Bars(params)))
+      }
+    }
+    setTimeout(this.draw, transitionTime)
+    return this
   }
 
   /**
@@ -434,30 +428,23 @@ export class Chart {
    */
   public deleteMapItem = (mapName: mapTypes, mapItemName: string): Chart => {
     const mapItem = this[mapName]?.get(mapItemName)
-    if (mapItem !== undefined) {
-      // if (mapItem.remove) ()
-      this[mapName].delete(mapItemName)
-      this.draw()
-      return this
-    } else {
+    if (mapItem === undefined) {
       throw new Error(
         `Failed attempting to delete "${mapItemName}" from "this.${mapName}".`
       )
     }
+    // if (mapItem.remove) ()
+    this[mapName].delete(mapItemName)
+    this.draw()
+    return this
   }
 
   /**
    * Adds default features to the chart
    */
   public addDefaults = (): Chart => {
-    return this
-      .addScale()
-      .addAxis()
-      .addKey()
-      .addVisual()
+    return this.addScale().addAxis().addKey().addVisual()
   }
-    
-
 
   /**
    * Sets the local chart dimensions based on the size of the container.
@@ -519,5 +506,4 @@ export class Chart {
    *
    */
   private readonly resizeWatcher = new ResizeObserver(this.redraw)
-
 }
