@@ -35,4 +35,4 @@ interface ChartTable {
   data: TableItem[]
 }
 
-export { ValueConfig, TableConfig, TableItem, TableData, ChartTable }
+export type { ValueConfig, TableConfig, TableItem, TableData, ChartTable }

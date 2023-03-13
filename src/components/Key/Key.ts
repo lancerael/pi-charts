@@ -76,13 +76,13 @@ export class Key {
       .enter()
       .append('text')
       .text(({ name }) => name)
-      .each((d, i, nodes) => {
+      .each((_d, i, nodes) => {
         const labelWidth = nodes[i].getBoundingClientRect().width + 22
         this.values[i].labelWidth = labelWidth
         iGroupOffset += labelWidth - 2
       })
       .attr('class', 'pic-key-label')
-      .attr('x', (d, i) => totalMargin(this.values, i))
+      .attr('x', (_d, i) => totalMargin(this.values, i))
       .attr('y', 10)
       .attr('width', 12)
       .attr('height', 12)
@@ -97,7 +97,7 @@ export class Key {
       .append('rect')
       .attr('class', 'pic-key')
       .attr('fill', ({ color }) => color as string)
-      .attr('x', (d, i) => totalMargin(this.values, i) - 16)
+      .attr('x', (_d, i) => totalMargin(this.values, i) - 16)
       .attr('y', 0)
       .attr('width', 12)
       .attr('height', 12)

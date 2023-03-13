@@ -1,7 +1,7 @@
 import { Tooltip } from '../components'
 import { ChartScales, Dimensions, D3Svg } from './'
 
-interface AxisParams {
+export interface AxisParams {
   d3Svg: D3Svg
   tooltip: Tooltip
   dimensions: Dimensions
@@ -10,6 +10,4 @@ interface AxisParams {
   scales: ChartScales
 }
 
-type ScaleType = 'band' | 'linear'
-
-export { AxisParams, ScaleType }
+export type ScaleType = 'band' | 'linear'

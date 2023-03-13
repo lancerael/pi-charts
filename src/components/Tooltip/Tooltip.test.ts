@@ -1,9 +1,13 @@
-import { Tooltip } from './'
-import { dispatchEvent } from '../../helpers/testing'
+//@ts-ignore
+import {
+  Tooltip,
+  dispatchEvent,
+  //@ts-ignore
+} from '../../../public/pi-lib-charts.js'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const { JSDOM } = jsdom
 
 const dom = new JSDOM(index)
@@ -22,7 +26,6 @@ describe('Tooltip', () => {
   })
 
   it('should throw error for missing container', () => {
-    // @ts-expect-error - forcing incorrect usage for test
     expect(() => new Tooltip('nothing')).toThrow(
       new Error('The tooltip has no valid container element.')
     )

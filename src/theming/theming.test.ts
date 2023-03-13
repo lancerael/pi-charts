@@ -1,9 +1,16 @@
-import { addStyleToDom, addTheme, getTheme, publishTheme, css } from './'
-import { compress } from '../helpers/utilities'
+import {
+  addStyleToDom,
+  addTheme,
+  getTheme,
+  publishTheme,
+  css,
+  compress,
+  //@ts-ignore
+} from '../../public/pi-lib-charts.js'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const { JSDOM } = jsdom
 const dom = new JSDOM(index)
 global.document = dom.window.document

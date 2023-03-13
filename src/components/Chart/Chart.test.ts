@@ -1,16 +1,21 @@
-import { Chart } from './'
+//@ts-ignore
+import {
+  Chart,
+  randomData,
+  //@ts-ignore
+} from '../../../public/pi-lib-charts.js'
+
 import jsdom from 'jsdom'
 import fs from 'fs'
-import { randomData } from '../../helpers'
 import { ChartParams, TableData } from '../../types'
 
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const { JSDOM } = jsdom
 
 const dom = new JSDOM(index)
 global.document = dom.window.document
 
-const getFlatChart = (params: ChartParams): any =>
+const getFlatChart = (params: any): any =>
   JSON.parse(JSON.stringify(new Chart(params)))
 
 describe('Chart', () => {
@@ -37,13 +42,13 @@ describe('Chart', () => {
         new Chart({
           container: 'nothing',
           label: 'test',
-        })
+        } as any)
     ).toThrow(new Error('No valid DOM element or selector provided for chart.'))
   })
 
   it('should throw error for missing label', () => {
     const container = document.createElement('div')
-    expect(() => new Chart({ container, label: '' })).toThrow(
+    expect(() => new Chart({ container, label: '' } as any)).toThrow(
       new Error('Unable to render the chart.')
     )
   })
@@ -65,7 +70,7 @@ describe('Chart', () => {
     const chart = new Chart({
       container: document.createElement('div'),
       label,
-    })
+    } as any)
     chart.setConfig(config, 'myConfig')
     chart.setData(data, 'myData', 'myConfig')
     expect(chart.configs.get('myConfig')).toEqual(config)
@@ -78,7 +83,7 @@ describe('Chart', () => {
       container: document.createElement('div'),
       label,
       config,
-    })
+    } as any)
     chart.setData(data, 'myData', 'default', false)
     expect(chart.dataSets.get('myData')?.data).toEqual(data)
   })
@@ -89,7 +94,7 @@ describe('Chart', () => {
       container: document.createElement('div'),
       label,
       data,
-    })
+    } as any)
     chart.setConfig(config, 'myConfig')
     expect(chart.configs.get('myConfig')).toEqual(config)
   })
@@ -99,7 +104,7 @@ describe('Chart', () => {
     const chart = new Chart({
       container: document.createElement('div'),
       label,
-    })
+    } as any)
     data[0].values[0] = -1
     chart.setData(data)
     const { minValue, maxValue } = chart.dataSets.get('default') as TableData
@@ -137,8 +142,7 @@ describe('Chart', () => {
     const chart = new Chart({
       container: document.createElement('div'),
       label,
-    })
-    // @ts-expect-error - forcing incorrect usage for test
+    } as any)
     delete config.values
     expect(() => chart.setConfig(config, 'myConfig')).toThrow(
       new Error('No valid configuration provided for chart.')
@@ -150,9 +154,8 @@ describe('Chart', () => {
     const chart = new Chart({
       container: document.createElement('div'),
       label,
-    })
+    } as any)
     chart.setConfig(config, 'myConfig')
-    // @ts-expect-error - forcing incorrect usage for test
     expect(() => chart.setData('data', 'myData', 'myConfig')).toThrow(
       new Error('No valid data provided for chart.')
     )
@@ -215,7 +218,6 @@ describe('Chart', () => {
       ...randomData(),
     })
     const config = chart.configs.get('default')
-    // @ts-expect-error - forcing incorrect usage for test
     config.values = undefined
     chart.addKey('default', 'default')
     expect(chart.keys.get('default')).toBeDefined()

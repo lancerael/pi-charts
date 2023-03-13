@@ -36,7 +36,7 @@ export class Axis {
    *
    * @property axisLabels
    */
-  private readonly axisLabels: [string, string]
+  private readonly axisLabels?: [string, string]
 
   /**
    * Scales for the axes
@@ -170,7 +170,7 @@ export class Axis {
   public renderLabels(): void {
     const { height, width, padding } = this.dimensions
     this.d3Svg.selectAll('text.pic-label').remove()
-    if (truthy(this.axisLabels[0])) {
+    if (truthy(this.axisLabels?.[0])) {
       this.d3Svg
         .append('text')
         .attr('class', 'pic-label pic-label-x')
@@ -178,16 +178,16 @@ export class Axis {
         .attr('y', 20)
         .attr('transform', 'rotate(-90)')
         .attr('text-anchor', 'middle')
-        .text(this.axisLabels[0])
+        .text(this.axisLabels?.[0] ?? '')
     }
-    if (truthy(this.axisLabels[1])) {
+    if (truthy(this.axisLabels?.[1])) {
       this.d3Svg
         .append('text')
         .attr('class', 'pic-label pic-label-y')
         .attr('x', (width + padding.l + padding.r) / 2)
         .attr('y', height - padding.b / 3)
         .attr('text-anchor', 'middle')
-        .text(this.axisLabels[1])
+        .text(this.axisLabels?.[1] ?? '')
     }
   }
 }

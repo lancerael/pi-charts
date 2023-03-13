@@ -84,8 +84,9 @@ export class Scale {
     if (
       this.scaleType === undefined ||
       !['band', 'linear'].includes(this.scaleType)
-    )
+    ) {
       throw new Error('Unknown chart type!')
+    }
     const scaleArrays = {
       band: [this.dataSet.data.map((d) => d.label), [0, innerWidth]],
       linear: [

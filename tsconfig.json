@@ -1,11 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ESNEXT",
-    "module": "commonjs",
-    "strict": true, 
-    "esModuleInterop": true, 
+    "target": "ES2016",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./public"
+  },
+  "include": ["src", "**/*.json"],
+  "exclude": ["**/*.test.ts"]
 }

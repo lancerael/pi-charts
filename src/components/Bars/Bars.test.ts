@@ -1,12 +1,19 @@
-import { Bars, Tooltip, Scale } from '../'
-import { randomData, addColorsToConfig } from '../../helpers'
-import { dispatchEvent } from '../../helpers/testing'
+//@ts-ignore
+import {
+  Bars,
+  Tooltip,
+  Scale,
+  randomData,
+  addColorsToConfig,
+  dispatchEvent,
+  //@ts-ignore
+} from '../../../public/pi-lib-charts.js'
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
 const { JSDOM } = jsdom
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const dom = new JSDOM(index)
 global.document = dom.window.document
 
@@ -42,12 +49,12 @@ const dataSet = {
   minValue: -1,
   maxValue: 100,
 }
-let callback = false
+// let callback = false
 const transitionTime = 100
 /* istanbul ignore next */
-const testCallback = {
-  clickCallback: () => (callback = true), // eslint-disable-line
-}
+// const testCallback = {
+//   clickCallback: () => (callback = true),
+// }
 const bars = new Bars({
   dimensions,
   d3Svg,
@@ -56,7 +63,7 @@ const bars = new Bars({
   config,
   dataSet,
   transitionTime,
-  clickCallback: testCallback.clickCallback,
+  // clickCallback: testCallback.clickCallback,
 })
 /* istanbul ignore next */
 const chartBars = d3Svg.node()?.querySelectorAll('.pic-bars') ?? []

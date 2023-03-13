@@ -1,5 +1,12 @@
-import { sliceSampleData, randomData, emptyTable, transformDataKeys } from './'
-import { randomNumber, newArray } from '../'
+import {
+  sliceSampleData,
+  randomData,
+  emptyTable,
+  transformDataKeys,
+  randomNumber,
+  newArray,
+  //@ts-ignore
+} from '../../../public/pi-lib-charts.js'
 import { TableConfig } from '../../types'
 
 describe('sliceSampleData', () => {
@@ -58,7 +65,7 @@ describe('randomData', () => {
     expect(tableData.config.values.length).toBe(10)
     expect(tableData.data.length).toBe(10)
     expect(tableData.data[0].values.length).toBe(10)
-    tableData.data[0].values.forEach((value) => {
+    tableData.data[0].values.forEach((value: any) => {
       expect(value).toBeGreaterThanOrEqual(10)
       expect(value).toBeLessThanOrEqual(20)
     })
@@ -102,7 +109,7 @@ describe('transformDataKeys', () => {
       { k1: 7, k2: 8, k3: 'nine' },
     ]
     const transformedData = transformDataKeys(config, data)
-    transformedData.forEach((newData, i) => {
+    transformedData.forEach((newData: any, i: number) => {
       expect(newData.values[0]).toEqual(data[i].k1)
       expect(newData.values[1]).toEqual(data[i].k2)
       expect(newData.label).toEqual(data[i].k3)
@@ -159,7 +166,6 @@ describe('transformDataKeys', () => {
   it('should handle missing config', () => {
     const data = [{ k1: 4 }, { k1: 7, k2: 8, k3: 'nine' }]
     const transformedData = transformDataKeys(undefined, data)
-    // @ts-expect-error - forcing error for test
     expect(transformedData).toEqual(data)
   })
 
@@ -183,7 +189,6 @@ describe('transformDataKeys', () => {
       { k1: 7, k2: 8, k3: 'nine', values: [44, 77] },
     ]
     const transformedData = transformDataKeys(config, data)
-    // @ts-expect-error - forcing error for test
     expect(transformedData).toEqual(data)
   })
 })
