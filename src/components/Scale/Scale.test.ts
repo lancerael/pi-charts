@@ -1,5 +1,9 @@
-import { Scale } from './'
-import { randomData } from '../../helpers'
+//@ts-ignore
+import {
+  Scale,
+  randomData,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 
 const { data: dataSet } = randomData()
 
@@ -44,14 +48,12 @@ describe('Scale', () => {
 
   it('should throw correct errors', () => {
     const bananaScale = new Scale({
-      // @ts-expect-error - forcing incorrect usage for test
       scaleType: 'banana',
       dimensions,
-    })
+    } as any)
     expect(() => bananaScale.render()).toThrow(
       new Error('No data to render scale!')
     )
-    // @ts-expect-error - forcing incorrect usage for test
     expect(() => bananaScale.setData()).toThrow(new Error('No data to set!'))
     bananaScale.setData({ data: dataSet, minValue: 0, maxValue: 100 })
     expect(() => bananaScale.render()).toThrow(new Error('Unknown chart type!'))

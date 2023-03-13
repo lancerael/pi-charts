@@ -1,12 +1,19 @@
-import { Bars, Tooltip, Scale } from '../'
-import { randomData, addColorsToConfig } from '../../helpers'
-import { dispatchEvent } from '../../helpers/testing'
+//@ts-ignore
+import {
+  Bars,
+  Tooltip,
+  Scale,
+  randomData,
+  addColorsToConfig,
+  dispatchEvent,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
 const { JSDOM } = jsdom
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const dom = new JSDOM(index)
 global.document = dom.window.document
 

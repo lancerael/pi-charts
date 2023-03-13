@@ -6,4 +6,4 @@ interface KeyParams {
   dimensions: Dimensions
 }
 
-export { KeyParams }
+export type { KeyParams }

@@ -1,4 +1,7 @@
-import { dispatchEvent } from './'
+import {
+  dispatchEvent,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 
 describe('dispatchEvent', () => {
   it('should dispatch an event', () => {

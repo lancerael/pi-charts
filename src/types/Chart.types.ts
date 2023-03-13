@@ -28,4 +28,4 @@ interface Dimensions {
 
 type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'
 
-export { ChartParams, Dimensions, Padding, mapTypes }
+export type { ChartParams, Dimensions, Padding, mapTypes }

@@ -22,4 +22,4 @@ interface VisualRenderParams {
   transition?: boolean
 }
 
-export { Visual, VisualParams, VisualRenderParams }
+export type { Visual, VisualParams, VisualRenderParams }

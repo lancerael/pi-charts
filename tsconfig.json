@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
-    "strict": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "composite": true,
-    "emitDeclarationOnly": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "target": "ES2016",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "emitDeclarationOnly": true,
     "outDir": "./dist"
   },
-  "include": ["src", "**/*.json"]
+  "include": ["src", "**/*.json"],
+  "exclude": ["**/*.test.ts"]
 }

@@ -7,4 +7,4 @@ interface ThemeList {
   [key: string]: Theme
 }
 
-export { Theme, ThemeList }
+export type { Theme, ThemeList }

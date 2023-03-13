@@ -7,11 +7,12 @@ import {
   createNode,
   compress,
   sanitise,
-} from './'
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const { JSDOM } = jsdom
 const dom = new JSDOM(index)
 global.document = dom.window.document
@@ -43,7 +44,7 @@ describe('randomNumber', () => {
 
   it('should omit specified number from the randomly generated integer ', () => {
     // Randomly generated 10x a number between 2-3 while omitting 3
-    newArray(10, () => randomNumber(2, 3, 3)).forEach((random) => {
+    newArray(10, () => randomNumber(2, 3, 3)).forEach((random: any) => {
       expect(random).toBe(2)
     })
   })
@@ -62,23 +63,23 @@ describe('newArray', () => {
 
 describe('truthy', () => {
   it('should handle strings', () => {
-    expect(truthy('something')).toBe(true)
-    expect(truthy('')).toBe(false)
+    expect(truthy('something' as any)).toBe(true)
+    expect(truthy('' as any)).toBe(false)
   })
   it('should handle numbers', () => {
-    expect(truthy(1)).toBe(true)
-    expect(truthy(0)).toBe(false)
+    expect(truthy(1 as any)).toBe(true)
+    expect(truthy(0 as any)).toBe(false)
   })
   it('should handle boolean', () => {
-    expect(truthy(true)).toBe(true)
-    expect(truthy(false)).toBe(false)
+    expect(truthy(true as any)).toBe(true)
+    expect(truthy(false as any)).toBe(false)
   })
   it('should handle arrays', () => {
-    expect(truthy([])).toBe(true)
-    expect(truthy([false])).toBe(true)
+    expect(truthy([] as any)).toBe(true)
+    expect(truthy([false] as any)).toBe(true)
   })
   it('should handle null', () => {
-    expect(truthy(null)).toBe(false)
+    expect(truthy(null as any)).toBe(false)
   })
   it('should handle undefined', () => {
     expect(truthy(undefined)).toBe(false)

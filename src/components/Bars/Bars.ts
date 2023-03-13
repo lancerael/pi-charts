@@ -188,14 +188,20 @@ export class Bars {
       }
 
       // Update the bars to match the latest data
-      this.chartGroup
+      let bars = this.chartGroup
         .selectAll(`rect.pic-bars-${i}`)
         .data(data)
         .attr('x', (d: TableItem) => Number(scaleX(d.label)) + barOffset)
         .attr('width', barWidth)
-        .transition()
-        .ease(easeLinear)
-        .duration(transitionTime)
+
+      if (typeof bars.transition === 'function') {
+        bars = bars
+          .transition()
+          .ease(easeLinear)
+          .duration(transitionTime) as any
+      }
+
+      bars
         .attr('y', (d: TableItem) => {
           let value = d.values[i]
           value = value < 0 ? Math.abs(value) : 0

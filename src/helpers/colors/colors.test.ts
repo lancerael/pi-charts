@@ -5,8 +5,9 @@ import {
   randomPalette,
   darkerColor,
   addColorsToConfig,
-} from './'
-import { randomData } from '../data'
+  randomData,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 import { RGBColor } from 'd3-color'
 
 const verifyColor = (newColor: RGBColor): void => {
@@ -45,7 +46,7 @@ describe('random256', () => {
 describe('randomColor', () => {
   it('should generate a color', () => {
     const newColor = randomColor()
-    verifyColor(newColor)
+    verifyColor(newColor as any)
   })
 })
 

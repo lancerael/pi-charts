@@ -1,10 +1,16 @@
-import { totalMargin, Key } from './'
+//@ts-ignore
+import {
+  Key,
+  totalMargin,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
+
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
 const { JSDOM } = jsdom
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const dom = new JSDOM(index)
 global.document = dom.window.document
 
@@ -60,7 +66,6 @@ describe('Key', () => {
   })
 
   it('should throw correct errors', () => {
-    // @ts-expect-error - forcing incorrect usage for test
     expect(() => new Key({})).toThrow(
       new Error('Incorrect parameters provided to Key constructor.')
     )

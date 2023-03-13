@@ -8,4 +8,4 @@ interface ChartScales {
   y?: Scale
 }
 
-export { AxisScale, ChartScales }
+export type { AxisScale, ChartScales }

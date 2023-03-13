@@ -1,12 +1,18 @@
-import { Axis, Tooltip, Scale } from '../'
-import { randomData } from '../../helpers'
-import { dispatchEvent } from '../../helpers/testing'
+//@ts-ignore
+import {
+  Axis,
+  Tooltip,
+  Scale,
+  randomData,
+  dispatchEvent,
+  //@ts-ignore
+} from '../../../dist/pi-lib-charts.js'
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
 const { JSDOM } = jsdom
-const index = fs.readFileSync('demo/index.html', 'utf-8')
+const index = fs.readFileSync('index.html', 'utf-8')
 const dom = new JSDOM(index)
 global.document = dom.window.document
 
@@ -99,7 +105,7 @@ describe('Axis', () => {
       d3Svg,
       tooltip,
       scales,
-    })
+    } as any)
     expect(d3Svg.node()?.querySelectorAll('.pic-axis-x').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-axis-y').length).toBe(1)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
@@ -108,13 +114,12 @@ describe('Axis', () => {
 
   it('should allow dimensions to be passed via render', () => {
     const d3Svg = select(document.body).append('svg')
-    // @ts-expect-error - forcing incorrect usage for test
     axis = new Axis({
       d3Svg,
       tooltip,
       scales,
       axisLabels,
-    })
+    } as any)
     expect(d3Svg.node()?.querySelectorAll('.pic-axis-x text').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-axis-y line').length).toBe(0)
     expect(d3Svg.node()?.querySelectorAll('.pic-label-x').length).toBe(0)
@@ -131,8 +136,7 @@ describe('Axis', () => {
   })
 
   it('should throw an error when the SVG is missing', () => {
-    // @ts-expect-error - forcing incorrect usage for test
-    expect(() => new Axis({})).toThrow(
+    expect(() => new Axis({} as any)).toThrow(
       new Error('No SVG provided to Axis constructor.')
     )
   })
