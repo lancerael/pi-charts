@@ -22,26 +22,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install
+        run: npm install
 
       - name: Build
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: build
+        run: npm build
 
       - name: Lint
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: lint
+        run: npm lint
 
-      - name: Test / Coverage
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: test:coverage
-
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        run: npm test
