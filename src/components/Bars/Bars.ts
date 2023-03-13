@@ -100,8 +100,8 @@ export class Bars {
     tooltip,
     dimensions,
     transitionTime,
-    clickCallback,
-  }: VisualParams) {
+  }: // clickCallback,
+  VisualParams) {
     if (config === undefined || dataSet === undefined || scales === undefined) {
       throw new Error('Table is incorrectly initialised.')
     }

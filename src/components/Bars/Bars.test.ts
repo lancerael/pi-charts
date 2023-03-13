@@ -42,12 +42,12 @@ const dataSet = {
   minValue: -1,
   maxValue: 100,
 }
-let callback = false
+// let callback = false
 const transitionTime = 100
 /* istanbul ignore next */
-const testCallback = {
-  clickCallback: () => (callback = true), // eslint-disable-line
-}
+// const testCallback = {
+//   clickCallback: () => (callback = true),
+// }
 const bars = new Bars({
   dimensions,
   d3Svg,
@@ -56,7 +56,7 @@ const bars = new Bars({
   config,
   dataSet,
   transitionTime,
-  clickCallback: testCallback.clickCallback,
+  // clickCallback: testCallback.clickCallback,
 })
 /* istanbul ignore next */
 const chartBars = d3Svg.node()?.querySelectorAll('.pic-bars') ?? []

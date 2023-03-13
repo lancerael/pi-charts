@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ESNEXT",
-    "module": "commonjs",
-    "strict": true, 
-    "esModuleInterop": true, 
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "**/*.json"]
 }

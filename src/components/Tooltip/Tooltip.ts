@@ -86,10 +86,8 @@ export class Tooltip {
     // const zoomDivider = 1 + (zoom > 1 ? zoom / 20 : 0)
     const offset = 10
     const { left, width, top, height } = this.container.getBoundingClientRect()
-    const {
-      width: ttWidth,
-      height: ttHeight,
-    } = this.tooltip.getBoundingClientRect()
+    const { width: ttWidth, height: ttHeight } =
+      this.tooltip.getBoundingClientRect()
     const { clientX: x, clientY: y } = event
     const xOverflow = width + left - x < ttWidth + offset
     const yOverflow = height + top - y < ttHeight + offset

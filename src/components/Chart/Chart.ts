@@ -37,7 +37,7 @@ export class Chart {
    *
    * @property transitionTime
    */
-  private readonly transitionTime = 500
+  // private readonly transitionTime = 500
 
   /**
    * DOM reference to container element that wraps SVG
@@ -144,7 +144,7 @@ export class Chart {
    *
    * @property resizeOffset
    */
-  private readonly resizeOffset = 0
+  // private readonly resizeOffset = 0
 
   /**
    * The chart's tooltip object.
