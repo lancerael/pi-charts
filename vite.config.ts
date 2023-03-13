@@ -8,5 +8,6 @@ export default defineConfig({
       name: `@pi-lib/charts`,
       fileName: `pi-lib-charts`,
     },
+    outDir: 'public',
   },
 })

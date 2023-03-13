@@ -1,8 +1,8 @@
 {
   "name": "@pi-lib/charts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple charting solution driven by d3 and ES.Next",
-  "main": "./dist/pi-lib-charts.js",
+  "main": "./public/pi-lib-charts.js",
   "repository": "https://github.com/lancerael/pi-charts",
   "author": "Lance Taylor",
   "license": "MIT",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && tsc",
     "prettier": "prettier -w ./src/**/*.ts",
     "eslint": "eslint --ext .ts",
     "lint": "npm run prettier && npm run eslint",
