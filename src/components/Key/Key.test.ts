@@ -3,7 +3,7 @@ import {
   Key,
   totalMargin,
   //@ts-ignore
-} from '../../../dist/pi-lib-charts.js'
+} from '../../../public/pi-lib-charts.js'
 
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'

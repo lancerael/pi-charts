@@ -3,7 +3,7 @@ import {
   Chart,
   randomData,
   //@ts-ignore
-} from '../../../dist/pi-lib-charts.js'
+} from '../../../public/pi-lib-charts.js'
 
 import jsdom from 'jsdom'
 import fs from 'fs'

@@ -1,7 +1,7 @@
 import {
   dispatchEvent,
   //@ts-ignore
-} from '../../../dist/pi-lib-charts.js'
+} from '../../../public/pi-lib-charts.js'
 
 describe('dispatchEvent', () => {
   it('should dispatch an event', () => {

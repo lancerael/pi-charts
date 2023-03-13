@@ -3,7 +3,7 @@ import {
   Scale,
   randomData,
   //@ts-ignore
-} from '../../../dist/pi-lib-charts.js'
+} from '../../../public/pi-lib-charts.js'
 
 const { data: dataSet } = randomData()
 

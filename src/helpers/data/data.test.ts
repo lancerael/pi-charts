@@ -6,7 +6,7 @@ import {
   randomNumber,
   newArray,
   //@ts-ignore
-} from '../../../dist/pi-lib-charts.js'
+} from '../../../public/pi-lib-charts.js'
 import { TableConfig } from '../../types'
 
 describe('sliceSampleData', () => {
