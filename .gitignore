@@ -23,5 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-.nyc_output/*
-.nyc_output/processinfo/
+.nyc_output
