@@ -7,7 +7,7 @@ import {
   addColorsToConfig,
   dispatchEvent,
   //@ts-ignore
-} from '../../../public/pi-lib-charts.js'
+} from '../../../vanilla/index.js'
 import { select } from 'd3-selection'
 import jsdom from 'jsdom'
 import fs from 'fs'

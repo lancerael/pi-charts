@@ -8,7 +8,7 @@ import {
   compress,
   sanitise,
   //@ts-ignore
-} from '../../../public/pi-lib-charts.js'
+} from '../../../vanilla/index.js'
 import jsdom from 'jsdom'
 import fs from 'fs'
 
