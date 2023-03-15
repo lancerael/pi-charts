@@ -7,7 +7,7 @@ import {
   addColorsToConfig,
   randomData,
   //@ts-ignore
-} from '../../../public/pi-lib-charts.js'
+} from '../../../vanilla/index.js'
 import { RGBColor } from 'd3-color'
 
 const verifyColor = (newColor: RGBColor): void => {
