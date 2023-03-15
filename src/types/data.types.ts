@@ -1,6 +1,6 @@
 import { RGBColor } from 'd3-color'
 
-interface ValueConfig {
+export interface ValueConfig {
   name: string
   color?: string
   key?: string
@@ -8,14 +8,14 @@ interface ValueConfig {
   labelWidth?: number
 }
 
-interface TableConfig {
+export interface TableConfig {
   values: ValueConfig[]
   axisLabels?: [string, string]
   axisKeys?: string[]
   trim?: boolean
 }
 
-interface TableItem {
+export interface TableItem {
   values: number[]
   label: string
   color?: string
@@ -23,16 +23,14 @@ interface TableItem {
 
 // type TableData = TableItem[]
 
-interface TableData {
+export interface TableData {
   data: TableItem[]
   minValue: number
   maxValue: number
 }
 
-interface ChartTable {
+export interface ChartTable {
   label: string
   config: TableConfig
   data: TableItem[]
 }
-
-export type { ValueConfig, TableConfig, TableItem, TableData, ChartTable }

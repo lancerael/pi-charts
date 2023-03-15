@@ -9,7 +9,7 @@ export default defineConfig({
       fileName: `index`,
     },
     outDir: 'vanilla',
-    target: 'es2020',
+    target: 'es2019',
     rollupOptions: {
       external: [
         'd3-array',

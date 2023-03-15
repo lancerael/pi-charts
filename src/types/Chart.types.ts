@@ -1,6 +1,6 @@
 import { TableConfig, TableItem } from './'
 
-interface ChartParams {
+export interface ChartParams {
   config?: TableConfig
   data?: TableItem[]
   theme?: string
@@ -8,14 +8,14 @@ interface ChartParams {
   label: string
 }
 
-interface Padding {
+export interface Padding {
   l: number
   r: number
   t: number
   b: number
 }
 
-interface Dimensions {
+export interface Dimensions {
   padding: Padding
   left: number
   width: number
@@ -26,6 +26,4 @@ interface Dimensions {
   resizeOffset: number
 }
 
-type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'
-
-export type { ChartParams, Dimensions, Padding, mapTypes }
+export type mapTypes = 'configs' | 'dataSets' | 'scales' | 'axes'

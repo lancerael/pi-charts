@@ -1,10 +1,8 @@
-interface Theme {
+export interface Theme {
   text: string
   background: string
 }
 
-interface ThemeList {
+export interface ThemeList {
   [key: string]: Theme
 }
-
-export type { Theme, ThemeList }

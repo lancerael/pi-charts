@@ -4,9 +4,9 @@ import { Dimensions, TableConfig, TableData, TableItem } from './'
 import { D3Svg } from './general.types'
 import { ChartScales } from './Scale.types'
 
-type Visual = Bars
+export type Visual = Bars
 
-interface VisualParams {
+export interface VisualParams {
   d3Svg: D3Svg
   config?: TableConfig
   dataSet?: TableData
@@ -17,9 +17,7 @@ interface VisualParams {
   clickCallback?: (e: MouseEvent, d: TableItem) => void
 }
 
-interface VisualRenderParams {
+export interface VisualRenderParams {
   reset?: boolean
   transition?: boolean
 }
-
-export type { Visual, VisualParams, VisualRenderParams }
