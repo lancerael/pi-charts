@@ -6,7 +6,7 @@ A charting library for visualization of complex data, to be used in any JavaScri
 
 ## Overview
 
-A simple API for the creation of SVG charts.
+A simple API for the creation of SVG charts.  It's a successor to d-theia, using functional rather than OOP - but is currently in early stages.
 Responsive in any device, providing additional detail via hover/touch tooltips.
 
 ## Charts added so far
